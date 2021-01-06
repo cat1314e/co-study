@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import n21 from '../message.js'
+import n21 from '../api/message.js'
 
 
 

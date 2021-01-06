@@ -30,9 +30,9 @@
 
 
 <script>
-import n21 from '../message.js'
+import n21 from '../api/message.js'
 import userHomePage from './userHomePage'
-
+// import apis from "../api/api.js"
 
 export default {
   name: 'home',
