@@ -53,9 +53,9 @@ export default {
         'password': this.formInline.password
       }
       apis.user_login(post_data).then(res=>{
-        const {data, errCode, msg} = res;
+        const {data, errCode, msg} = res.data;
         console.log('res', res)
-        if (errCode === 0) {
+        if (errCode == 0) {
           // console.log(data.access_token)
           // common.setToken(data.access_token)
           this.$router.push('/homepage')
