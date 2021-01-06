@@ -1,23 +1,27 @@
 import axios from 'axios'
 
-const ajax = (method, url, params) => {
-    if (method === 'post') {
-        return (
-            axios.post('http://data-test.co-study.com.cn/api' + url, {
-                params
-            })
-        )
-    } else if (method === 'post') {
-        return (
-            axios.get('http://data-test.co-study.com.cn/api' + url, {
-                params
-            })
-        )
+class Ajax_api {
+    constructor(baseUrl) {
+        this.baseUrl = baseUrl || 'http://localhost:8000/home'
+    }
+
+    get(path) {
+        let url = this.baseUrl + path
+        return axios.get(url,{
+            params: {
+                ID: 12345
+            }
+        })
+        .then(r => r.data)
+    }
+
+    post(path, data) {
+        let url = this.baseUrl + path
+        return axios.post(url, {
+            firstName: 'Fred',
+            lastName: 'Flintstone'
+        }).then(r => r.data)
     }
 }
 
-const apis = {
-    user_login: (params) => ajax('post', '/user/sign_in', params),
-}
-
-export default apis
+export default Ajax_api

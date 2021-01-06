@@ -3,22 +3,9 @@ import App from './App.vue'
 import ViewUI from 'view-design';
 import 'view-design/dist/styles/iview.css';
 import router from './router'
-
-
-
 Vue.config.productionTip = false
 Vue.use(ViewUI)
 
-
-
-// router.beforeEach((to, from, next) => {
-//   let token = localStorage.getItem('access_token')
-//   if(to.name !== 'sign_in' && ! token){
-//     next('/sign_in')
-//   }else {
-//     next()
-//   }
-// })
 
 new Vue({
   render: h => h(App),

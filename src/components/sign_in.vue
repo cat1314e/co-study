@@ -24,7 +24,6 @@
 </template>
 <script>
 import pic from '../assets/logo.png'
-import apis from "../api/api.js";
 export default {
   data: function() {
     return {
@@ -49,30 +48,20 @@ export default {
   methods: {
     handleSubmit(name) {
       let post_data = {
-        'user_name': this.formInline.user,
-        'password': this.formInline.password
+        'user_name': this.userName,
+        'password': this.password
       }
       apis.user_login(post_data).then(res=>{
         const {data, errCode, msg} = res;
-        console.log('res', res)
         if (errCode === 0) {
-          // console.log(data.access_token)
-          // common.setToken(data.access_token)
+          console.log(data.access_token)
+          common.setToken(data.access_token)
           this.$router.push('/homepage')
         }else {
           alert(msg)
         }
       })
-
-      // this.$refs[name].validate((valid) => {
-      //   if (valid) {
-      //     this.$Message.success('登录成功!')
-      //     this.$router.push('/homepage')
-      //     console.log('登录成功!')
-      //   } else {
-      //     this.$Message.error('账户或密码错误!')
-      //   }
-      // })
+      
     }
   },
 }
