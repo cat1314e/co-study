@@ -6,7 +6,7 @@ import VueRouter from 'vue-router'
 // 这样就可以使用 vue-router 的功能了
 Vue.use(VueRouter)
 
-import sign from '../components/sign_in'
+import login from '../components/login'
 import homepage from '../components/homepage'
 import detain from '../controlThing/detain'
 
@@ -16,11 +16,11 @@ const routes = [
         // redirect 用来做重定向, 也就是访问 / 的时候会重定向到 /home
         // 并且访问 /home 会跳转到 home 组件
         // 所以现在访问根路由 / 就会跳转到 home 组件
-        redirect: '/sign',
+        redirect: '/login',
     },
     {
-        path: '/sign',
-        component: sign,
+        path: '/login',
+        component: login,
     },
     {
         path: '/homepage',
