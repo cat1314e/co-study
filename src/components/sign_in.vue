@@ -37,7 +37,7 @@ export default {
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
-          { type: 'string', min: 6, message: '密码长度不能小于6位', trigger: 'blur' }
+          { type: 'string', min: 0, message: '密码长度不能为空', trigger: 'blur' }
         ]
       },
       url: pic,
@@ -47,15 +47,21 @@ export default {
   },
   methods: {
     handleSubmit(name) {
-      this.$refs[name].validate((valid) => {
-        if (valid) {
-          this.$Message.success('登录成功!')
+      let post_data = {
+        'user_name': this.userName,
+        'password': this.password
+      }
+      apis.user_login(post_data).then(res=>{
+        const {data, errCode, msg} = res;
+        if (errCode === 0) {
+          console.log(data.access_token)
+          common.setToken(data.access_token)
           this.$router.push('/homepage')
-          console.log('登录成功!')
-        } else {
-          this.$Message.error('账户或密码错误!')
+        }else {
+          alert(msg)
         }
       })
+      
     }
   },
 }
