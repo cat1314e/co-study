@@ -53,6 +53,7 @@ export default {
       {text: '三天', value: 3},
       {text: '七天', value: 7},
     ]
+
     return {
       invite: '',
       nowTime: nowTime,

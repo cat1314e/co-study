@@ -6,16 +6,16 @@
           v-bind:key="i"
     >
       <!--在todo里添加一个东西使整行被点击都会响应-->
-      <p>被举报人：<span @click="actionClickUser">{{ m.reportUserName }}</span></p>
-      <p>被举报时间：{{ m.reportTime }}</p>
-      <p>举报类型：{{ m.reportType }}</p>
-      <p>举报范围：{{ m.reportRange }}</p>
-      <p>举报描述：{{ m.reportDescribe }}</p>
-      <img class="co-image" v-bind:src=m.reportPhoto>
+      <p>被举报人：<span @click="actionClickUser">{{ m.be_report_invite_code }}</span></p>
+      <p>被举报时间：{{ m.datetime }}</p>
+      <p>举报类型：{{ m.report_type }}</p>
+      <p>举报范围：{{ m.report_content }}</p>
+      <p>举报描述：{{ m.report_remark }}</p>
+      <img class="co-image" v-bind:src=m.avatar>
       <div class="co-buttons-update">
         <button @click="actionClickHandle" class="co-button-update">处理</button>
         <button @click="actionClickIgnore" class="co-button-update">忽略</button>
-        <button @click="actionClickDetain" :data-id=m.reportInvite class="co-button-update">拘留</button>
+        <button @click="actionClickDetain" :data-id=m.be_report_invite_code class="co-button-update">拘留</button>
       </div>
     </Card>
     <UserHomePage
@@ -30,22 +30,56 @@
 
 
 <script>
-import n21 from '../api/message.js'
+
 import userHomePage from './userHomePage'
-// import apis from "../api/api.js"
+import apis from "../http/api.js"
 
 export default {
   name: 'home',
 
   data: function() {
     return {
-      userMessage: n21,
+      userMessage: [],
       home_to_user: true,
       user_test: '',
       co_id: '',
     }
   },
+  created() {
+    this.getData()
+    this.getOptions()
+  },
   methods: {
+    getOptions: function() {
+      apis.report_get_options().then(res => {
+        const { data, errCode, msg } = res;
+        if (errCode === 0) {
+          console.log('getOptions', res)
+        }
+      }).catch()
+    },
+    getData() {
+      let params = {
+        page: 1,
+        page_size: 10000,
+        start_datetime: '',
+        end_datetime: '',
+        be_report_invite_code: null,
+        be_report_status: null,
+        report_type: null,
+        report_status: null,
+        report_content: null,
+        reporter_invite_code: null,
+      }
+      apis.report_get_data(params).then(res => {
+        const { data, errCode, msg } = res;
+        console.log('data', res)
+        if (errCode === 0) {
+          this.userMessage = res.data.records
+          console.log(res.data.records)
+        }
+      }).catch()
+    },
     actionClickUser: function(event) {
       console.log('dark bad')
       this.home_to_user = false

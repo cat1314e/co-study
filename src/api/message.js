@@ -1,29 +1,5 @@
 import pic from '../assets/logo.png'
-import api from "./api.js"
-
-
-let n22 = []
-// api.report_get_data(' ').then(res => {
-//     console.log('res', res)
-//     const { data, errCode, msg } = res;
-//     if (errCode === 0) {
-//         // this.pageOption.total = data.count;
-//         // this.dataList = data.records;
-//     }
-// }).catch()
-// let params = {
-//     page: this.pageOption.page,
-//     page_size: this.pageOption.page_size,
-//     start_datetime: this.filterData.datetime[0],
-//     end_datetime: this.filterData.datetime[1],
-//     be_report_invite_code: this.filterData.be_report_invite_code,
-//     be_report_status: this.filterData.be_report_status,
-//     report_type: this.filterData.report_type,
-//     report_status: this.filterData.report_status,
-//     report_content: this.filterData.report_content,
-//     reporter_invite_code: this.filterData.reporter_invite_code
-// }
-
+// import api from "./api.js"
 
 let n21 = [
     {

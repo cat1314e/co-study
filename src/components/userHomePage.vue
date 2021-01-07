@@ -3,15 +3,15 @@
 <div>
   <Card class="co-card" :bordered="false" v-for="(s, i) in userMessage"
     v-bind:key="i"
-    v-show="reportName === s.reportUserName"
+    v-show="reportName === s.be_report_invite_code"
   >
   <!--在todo里添加一个label使整行被点击都会响应-->
-  <p><span @click="actionClickUserBack">被举报人：{{ s.reportUserName }}</span></p>
-  <p>被举报时间：{{ s.reportTime }}</p>
-  <p>举报类型：{{ s.reportType }}</p>
-  <p>举报范围：{{ s.reportRange }}</p>
-  <p>举报描述：{{ s.reportDescribe }}</p>
-  <img class="co-image" v-bind:src=s.reportPhoto>
+  <p><span @click="actionClickUserBack">被举报人：{{ s.be_report_invite_code }}</span></p>
+  <p>被举报时间：{{ s.datetime }}</p>
+  <p>举报类型：{{ s.report_type }}</p>
+  <p>举报范围：{{ s.report_content }}</p>
+  <p>举报描述：{{ s.report_remark }}</p>
+  <img class="co-image" v-bind:src=s.avatar>
   <div class="co-buttons-update">
     <button @click="actionClickHandle" class="co-button-update">处理</button>
     <button @click="actionClickIgnoreU" class="co-button-update">忽略</button>
@@ -27,21 +27,55 @@
 </template>
 
 <script>
-import n21 from '../api/message.js'
 
 
+import apis from "../http/api.js"
 
 export default {
   name: 'userPage',
   props: ['reportName'],
   data: function() {
     return {
-      userMessage: n21,
+      userMessage: [],
       usershow: true,
       co_id: '',
     }
   },
+  created() {
+    this.getData()
+    this.getOptions()
+  },
   methods: {
+    getOptions: function() {
+      apis.report_get_options().then(res => {
+        const { data, errCode, msg } = res;
+        if (errCode === 0) {
+          console.log('getOptions', res)
+        }
+      }).catch()
+    },
+    getData() {
+      let params = {
+        page: 1,
+        page_size: 20,
+        start_datetime: '',
+        end_datetime: '',
+        be_report_invite_code: null,
+        be_report_status: null,
+        report_type: null,
+        report_status: null,
+        report_content: null,
+        reporter_invite_code: null,
+      }
+      apis.report_get_data(params).then(res => {
+        const { data, errCode, msg } = res;
+        console.log('data', res)
+        if (errCode === 0) {
+          this.userMessage = res.data.records
+          console.log(res.data.records)
+        }
+      }).catch()
+    },
     actionClickUserBack: function() {
       this.$emit('fatherMethod');
     },

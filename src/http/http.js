@@ -29,7 +29,8 @@ switch (Host.env) {
     case "pub":
         // baseURL = Host.PublicHost;// 生产环境
         baseURL = Host.testHost;// 测试环境
-        studyURL = Host.studyHost
+        studyURL = Host.studyHost // 生产环境
+        // studyURL = Host.testStudyHost // 测试环境
         break;
     case "test":
         baseURL = Host.testHost;
@@ -53,7 +54,6 @@ switch (Host.env) {
 /* 创建axios实例 */
 var instance = axios.create({
     baseURL: baseURL,
-    // baseURL: 'http://data-test.co-study.com.cn/api',
     timeout: 30000
 })
 // axios.defaults.baseURL = '/index.php';
@@ -152,8 +152,7 @@ instance.interceptors.response.use((response) => {
  * @param {Object} data    请求的参数
  * @returns {Promise}     返回一个promise对象，其实就相当于axios请求数据的返回值
  */
-
-export default (method, url, data = {}, host = null, responseType = {}, coAuthorization = null) => {
+const ajax = (method, url, data = {}, host = null, responseType = {}, coAuthorization = null) => {
     if (common.getToken()) {
         instance.defaults.headers.common['Authorization'] = 'Bearer ' + common.getToken();
     }
@@ -163,9 +162,9 @@ export default (method, url, data = {}, host = null, responseType = {}, coAuthor
     method = method.toLowerCase();
     // data.token = Tools.cookie.getCookie('token')
     if (host === 'study') {
-        instance.defaults.baseURL = studyURL
+        // instance.defaults.baseURL = studyURL
         // instance.defaults.baseURL = Host.studyHost
-        // instance.defaults.baseURL = Host.testStudyHost
+        instance.defaults.baseURL = Host.testStudyHost
         // instance.defaults.baseURL = Host.localStudyHost
         // instance.defaults.baseURL = Host.lanStudyHost
     }else {
@@ -182,3 +181,5 @@ export default (method, url, data = {}, host = null, responseType = {}, coAuthor
         return false;
     }
 }
+
+export default ajax

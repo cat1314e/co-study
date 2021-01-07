@@ -48,10 +48,10 @@ var data = [
     }
 ]
 
-// n21.sort(function(a,b){
-//     return a.reportTime < b.reportTime ? 1 : -1
-// })
-//
+n21.sort(function(a,b){
+    return a.reportTime < b.reportTime ? 1 : -1
+})
+
 const log = console.log.bind(console)
 const demoDate = function(day = 0) {
     // 时间标准库
@@ -67,3 +67,7 @@ const demoDate = function(day = 0) {
     return s
 }
 log('demoDate()', demoDate())
+
+
+
+

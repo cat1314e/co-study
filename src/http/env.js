@@ -19,8 +19,8 @@ const CONFIG = {
     lanHost: 'http://192.168.1.101:7000/api',  // 局域网本地环境
 
     // app项目
-    studyHost: 'https://slb.co-study.com.cn',  // 测试环境
-    testStudyHost: 'http://test.co-study.com.cn',  // 生产环境
+    studyHost: 'https://slb.co-study.com.cn', // 生产环境
+    testStudyHost: 'http://test.co-study.com.cn',   // 测试环境
     localStudyHost: 'http://localhost:5000',  // 本地环境
     lanStudyHost: 'http://192.168.1.101:5000'  // 局域网本地环境
 };
