@@ -15,7 +15,7 @@
       <div class="co-buttons-update">
         <button @click="actionClickHandle" class="co-button-update">处理</button>
         <button @click="actionClickIgnore" class="co-button-update">忽略</button>
-        <button @click="actionClickDetain" :data-id=m.be_report_invite_code class="co-button-update">拘留</button>
+        <button @click="actionClickDetain" :data-id=m.id class="co-button-update">拘留</button>
       </div>
     </Card>
     <UserHomePage
@@ -73,7 +73,7 @@ export default {
       }
       apis.report_get_data(params).then(res => {
         const { data, errCode, msg } = res;
-        console.log('data', res)
+        // console.log('data', res)
         if (errCode === 0) {
           this.userMessage = res.data.records
           console.log(res.data.records)

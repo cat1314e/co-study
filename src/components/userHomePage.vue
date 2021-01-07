@@ -15,7 +15,7 @@
   <div class="co-buttons-update">
     <button @click="actionClickHandle" class="co-button-update">处理</button>
     <button @click="actionClickIgnoreU" class="co-button-update">忽略</button>
-    <button @click="actionClickDetainU" :data-id=s.reportInvite class="co-button-update">拘留</button>
+    <button @click="actionClickDetainU" :data-id=s.id class="co-button-update">拘留</button>
   </div>
   </Card>
   <br>
@@ -50,7 +50,7 @@ export default {
       apis.report_get_options().then(res => {
         const { data, errCode, msg } = res;
         if (errCode === 0) {
-          console.log('getOptions', res)
+          // console.log('getOptions', res)
         }
       }).catch()
     },
@@ -69,10 +69,10 @@ export default {
       }
       apis.report_get_data(params).then(res => {
         const { data, errCode, msg } = res;
-        console.log('data', res)
+        // console.log('data', res)
         if (errCode === 0) {
           this.userMessage = res.data.records
-          console.log(res.data.records)
+          // console.log(res.data.records)
         }
       }).catch()
     },
