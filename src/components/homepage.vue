@@ -10,15 +10,17 @@
       <p>被举报时间：{{ m.datetime }}</p>
       <p>举报类型：{{ m.report_type }}</p>
       <p>举报范围：{{ m.report_content }}</p>
+      <p>举报状态：{{ m.be_report_status }}</p>
       <p>举报描述：{{ m.report_remark }}</p>
       <img class="co-image" v-bind:src=m.avatar>
-      <div class="co-buttons-update">
+      <div class="co-buttons-update" :data-id=m.id>
         <button @click="actionClickHandle" class="co-button-update">处理</button>
         <button @click="actionClickIgnore" class="co-button-update">忽略</button>
-        <button @click="actionClickDetain" :data-id=m.id class="co-button-update">拘留</button>
+        <button @click="actionClickDetain" class="co-button-update">拘留</button>
       </div>
     </Card>
     <UserHomePage
+        ref="child"
         v-show="home_to_user === false"
         @fatherMethod="fatherMethod"
         v-bind:reportName="user_test"
@@ -30,9 +32,11 @@
 
 
 <script>
-
 import userHomePage from './userHomePage'
 import apis from "../http/api.js"
+
+
+
 
 export default {
   name: 'home',
@@ -80,12 +84,15 @@ export default {
         }
       }).catch()
     },
+
+    // 切换到个人页面
     actionClickUser: function(event) {
-      console.log('dark bad')
       this.home_to_user = false
       this.user_test = event.target.innerText
       console.log('this.user_test', this.user_test)
+      this.$refs.child.getUserDetentionInfo(this.user_test)
     },
+
     actionClickHandle: function(event) {
       let self = event.target
       let buttons = self.closest('.co-buttons-update')
@@ -98,25 +105,43 @@ export default {
       // 3 评论  删除。
 
     },
+    fatherMethod() {
+      console.log('测试')
+      this.home_to_user = true
+    },
+
     actionClickDetain: function(event) {
       let self = event.target
-      this.co_id = self.dataset.id
+      let iWant = self.closest('.co-buttons-update')
+      this.co_id = iWant.dataset.id
       console.log('co_id', this.co_id)
       this.$router.push({
         path:`/detain/${this.co_id}`
       })
     },
-    fatherMethod() {
-      console.log('测试')
-      this.home_to_user = true
-    },
+
+
     actionClickIgnore(event) {
       let self = event.target
-      let userCard = self.closest('.co-card')
-      console.log('userCard', userCard)
-      userCard.remove()
+      let iWant = self.closest('.co-buttons-update')
+      let id = iWant.dataset.id
+      // userCard.remove()
       // 此处添加移除数据库的此条记录
-
+      let post_data = {
+        id: id.toString(),
+        check_type: 2
+      };
+      apis.report_report_check(post_data).then(res => {
+        const { data, errCode, msg } = res;
+        if (errCode === 0) {
+          this.getData()
+          // this.$router.push('/homepage')
+        } else {
+          alert(msg)
+        }
+      }).catch(err => {
+        alert('接口异常')
+      })
     }
   },
   components: {

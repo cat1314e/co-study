@@ -27,8 +27,8 @@ let studyURL;
 
 switch (Host.env) {
     case "pub":
-        // baseURL = Host.PublicHost;// 生产环境
-        baseURL = Host.testHost;// 测试环境
+        baseURL = Host.PublicHost;// 生产环境
+        // baseURL = Host.testHost;// 测试环境
         studyURL = Host.studyHost // 生产环境
         // studyURL = Host.testStudyHost // 测试环境
         break;

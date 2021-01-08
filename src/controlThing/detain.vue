@@ -3,7 +3,7 @@
     <form method="get" class="co-detain-form">
       <label for="invitation">邀请码</label>
       <input id="invitation" :value=userMessage.be_report_invite_code type="text"/>
-      <input class="co-select" type="submit" value="查询">
+      <input class="co-select" @click="changeSelect" type="submit" value="查询">
     </form>
     <div class="co-detain-text">
       <div>
@@ -29,7 +29,7 @@
 
 <script>
 import apis from "../http/api.js"
-
+// import tools from '../http/tool.js'
 
 const demoDate = function(day = 0) {
   // 时间标准库
@@ -88,7 +88,7 @@ export default {
   },
   created: function() {
     let r = this.$route.params.co_id
-    console.log('this.$route.params.co_id', this.$route.params.co_id)
+    // console.log('this.$route.params.co_id', this.$route.params.co_id)
     this.co_id = r
 
     // 获取数据，
@@ -146,7 +146,6 @@ export default {
       this.nowTime = demoDate(0)
 
       let id = this.userMessage.id
-      let Sid = String(id)
       let post_data = {
         // this.getOptions()
         // ban_days: 7
@@ -154,13 +153,13 @@ export default {
         // detention_time: "2021-01-07 14:40:31"
         // detention_type: 1
         // id: "488"
-        id: Sid,
+        id: id.toString(),
         detention_time: this.nowTime,
         ban_days: countDay,
         detention_type: this.detention_type,
         check_type: 1,
       }
-      console.log('post_data', post_data)
+      // console.log('post_data', post_data)
       apis.report_report_check(post_data).then(res => {
         const { data, errCode, msg } = res;
         if (errCode === 0) {
@@ -173,7 +172,10 @@ export default {
       })
     },
 
+    // 改变邀请码
+    changeSelect: function() {
 
+    },
   }
 }
 </script>

@@ -20,14 +20,17 @@ const routes = [
     },
     {
         path: '/login',
+        name: 'login',
         component: login,
     },
     {
         path: '/homepage',
+        name: 'homepage',
         component: homepage,
     },
     {
         path: '/detain/:co_id',
+        name: 'detain',
         component: detain,
     },
 ]

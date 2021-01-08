@@ -56,7 +56,7 @@ export default {
         console.log('res', res)
         if (errCode === 0) {
           common.setToken(data.access_token)
-          console.log('access_token', localStorage.getItem('access_token'))
+          // console.log('access_token', localStorage.getItem('access_token'))
           this.$router.push('/homepage')
         }else {
           alert(msg)
