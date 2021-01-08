@@ -1,6 +1,6 @@
 <template >
 <div>
-  <div v-if="reporterDetentionInfo.records[0].length !== 0">
+  <div v-show="personalShow === false" v-if="reporterDetentionInfo.records[0].length !== 0">
     <Card class="co-card" :bordered="false">
       <p>最近封禁详情：{{ reportName }}</p>
       <p>{{ reporterDetentionInfo.record_time }}</p>
@@ -9,8 +9,8 @@
         <span>{{ reporterDetentionInfo.who_detention }}</span>
         <span>{{ reporterDetentionInfo.ban_days }}</span>
       </p>
-      <p  v-if="reporterDetentionInfo.detention_type === '其他'">
-        以下为历史封禁信息
+      <p>
+        以下为历史封禁信息：
       </p>
       <div class="co-buttons-update">
         <button  @click="updateDetentionRecordButton" v-if="reporterDetentionInfo.detention_type !== '其他'" class="co-button-update">修改期限</button>
@@ -41,6 +41,28 @@
       </div>
     </Card>
   </div>
+
+<div class="co-chang-days" v-show="changDays === true" >
+   <div class="co-chang-day"
+   >
+     <p>确认修改期限么？</p>
+     <hr>
+     <p>{{ modalUpdateDetentionData.desc }}</p>
+     <form>
+       <label for="day">修改为:</label>
+       <input type="text"
+              id="day"
+              v-model="modalUpdateDetentionData.ban_days"
+       >
+       <p>将在{{ getModalUpdateDetentionMsg() }}放出</p>
+     </form>
+     <div class="button-judge">
+       <span @click="userClickCancel" class="co-judge">取消</span>
+       <span @click="userClickDetermine" class="co-judge">确定</span>
+     </div>
+   </div>
+</div>
+
 </div>
 
 
@@ -75,10 +97,9 @@ export default {
   props: ['reportName'],
   data: function() {
     return {
-      // userMessage: [],
-      usershow: true,
       co_id: '',
-      str: '',
+      changDays: false,
+      personalShow: false,
       reporterDetentionInfo: {
         status: 0,
         record_time: null,
@@ -86,6 +107,12 @@ export default {
         detention_type: null,
         ban_days: null,
         records: [[]]
+      },
+      modalUpdateDetentionData: {
+        desc: null,
+        detention_time: null,
+        ban_days: 0,
+        min_ban_days: null
       },
     }
   },
@@ -160,14 +187,58 @@ export default {
 
     // 修改期限
     updateDetentionRecordButton: function() {
+      this.changDays = !this.changDays
+      this.personalShow = !this.personalShow
+      this.getBeReporterLastStatus()
+      // alert('sadd')
 
-    }
+    },
+
+    getModalUpdateDetentionMsg() {
+      if (this.modalUpdateDetentionData.detention_time) {
+        let endDateTime = this.$moment(this.modalUpdateDetentionData.detention_time).add(this.modalUpdateDetentionData.ban_days, 'days').format("YYYY-MM-DD")
+        return endDateTime + ' 放出'
+      } else {
+        let endDateTime = this.$moment().add(this.modalUpdateDetentionData.ban_days, 'days').format("YYYY-MM-DD")
+        return endDateTime + ' 放出'
+      }
+    },
+
+    // 修改期限的数据
+    getBeReporterLastStatus() {
+      let params = {
+        invite_code: this.reportName
+      };
+      apis.report_get_be_reporter_last_status(params).then(res => {
+        const { data, errCode, msg } = res;
+        console.log('datass', data)
+        if (errCode === 0) {
+          this.modalUpdateDetentionData.desc = data.desc;
+          this.modalUpdateDetentionData.detention_time = data.detention_time;
+          this.modalUpdateDetentionData.ban_days = data.min_ban_days
+        } else {
+          alert(msg)
+        }
+      }).catch(err => {
+        alert('接口异常')
+      })
+    },
+    // 确定和取消
+    userClickDetermine: function() {
+      this.changDays = !this.changDays
+      this.personalShow = !this.personalShow
+
+    },
+    userClickCancel: function() {
+      this.changDays = !this.changDays
+      this.personalShow = !this.personalShow
+    },
 
   },
 }
 </script>
 
-<style>
+<style scoped>
 .co-buttons-update{
   position: absolute;
   right: 5vw;
@@ -189,5 +260,36 @@ export default {
 .co-image{
   width: 60%
 }
+.co-chang-days{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  opacity: 0.5;
+}
+.co-chang-day{
+  position: absolute;
+  width: 80%;
+  height: 40%;
+  background: #ffffff;
+  left: 10%;
+  top: 20%;
+  color: black;
+  padding: 10px;
+  border-radius: 5px;
+}
+.button-judge{
+  position: absolute;
+  /*padding: 10px;*/
+  left: 50%;
+  bottom: 10%;
+  transform: translateX(-50%);
 
+}
+.co-judge{
+  border: 1px solid black;
+  margin: 10px;
+  padding: 5px;
+  border-radius: 5px;
+}
 </style>

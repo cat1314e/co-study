@@ -3,7 +3,7 @@
     <form method="get" class="co-detain-form">
       <label for="invitation">邀请码</label>
       <input id="invitation" :value=userMessage.be_report_invite_code type="text"/>
-      <input class="co-select" @click="changeSelect" type="submit" value="查询">
+      <input class="co-select" type="submit" value="查询">
     </form>
     <div class="co-detain-text">
       <div>
@@ -12,13 +12,13 @@
         <select id="downMenu" v-model="selected">
           <option v-for="(option, i) in options " :key="i" :value ="option.value">{{ option.text }}</option>
         </select>
-        <p>预计于{{ outTime }}释放</p>
+        <p>预计于{{ getDetainOutTime() }}释放</p>
         <button @click="detainClick" class="co-detain-sure">确定</button>
       </div>
       <div class="co-detain-len">
         <h3>拘留记录：</h3>
         <div>拘留时间：{{ nowTime }} 至
-          <br>{{ outTime }}</div>
+          <br>{{ getDetainOutTime() }}</div>
         <p>拘留类型：{{ userMessage.report_type }}</p>
         <p>拘留来源：{{ userMessage.be_report_status }}</p>
       </div>
@@ -31,7 +31,7 @@
 import apis from "../http/api.js"
 // import tools from '../http/tool.js'
 
-const demoDate = function(day = 0) {
+const demoDate = function() {
   // 时间标准库
   let s = ''
   let d = new Date()
@@ -41,7 +41,7 @@ const demoDate = function(day = 0) {
   let shi = d.getHours()
   let fen = d.getMinutes()
   let miao = d.getSeconds()
-  s = `${nian}-${yue}-${ri + day} ${shi}:${fen}:${miao}`
+  s = `${nian}-${yue}-${ri} ${shi}:${fen}:${miao}`
   return s
 }
 
@@ -68,8 +68,7 @@ const findType = (array, type) => {
 export default {
   name: 'detain',
   data: function(){
-    let nowTime = demoDate(0)
-    let outTime = demoDate(1)
+    let nowTime = demoDate()
     let options = [
       {text: '一天', value: 1},
       {text: '三天', value: 3},
@@ -79,7 +78,6 @@ export default {
     return {
       co_id: '',
       nowTime: nowTime,
-      outTime: outTime,
       selected: 1,
       options: options,
       userMessage: {},
@@ -88,7 +86,6 @@ export default {
   },
   created: function() {
     let r = this.$route.params.co_id
-    // console.log('this.$route.params.co_id', this.$route.params.co_id)
     this.co_id = r
 
     // 获取数据，
@@ -118,10 +115,7 @@ export default {
         const { data, errCode, msg } = res;
         if (errCode === 0) {
           let array = res.data.records
-          // console.log('array', array)
-          // console.log('this.co_id', this.co_id)
           this.userMessage = findId(array, this.co_id)
-          // console.log('this.userMessage', this.userMessage)
           this.getOptions()
         }
       }).catch()
@@ -130,20 +124,22 @@ export default {
       apis.report_get_options().then(res => {
         const { data, errCode, msg } = res;
         if (errCode === 0) {
-          // console.log('getOptions', res)
           let typeArray = res.data.reportTypeList
           let type1 = findType(typeArray, this.userMessage.report_type)
-          // console.log('type1', type1)
           this.detention_type = type1.value
-          // console.log('this.detention_type', this.detention_type)
         }
       }).catch()
+    },
+
+    getDetainOutTime() {
+        let endDateTime = this.$moment(this.nowTime).add(this.selected, 'days').format("YYYY-MM-DD")
+        return endDateTime
     },
     //单条核实按钮
     detainClick: function() {
       let countDay = this.selected
-      this.outTime = demoDate(countDay)
-      this.nowTime = demoDate(0)
+      console.log('countDay', countDay)
+      this.nowTime = demoDate()
 
       let id = this.userMessage.id
       let post_data = {
@@ -159,7 +155,6 @@ export default {
         detention_type: this.detention_type,
         check_type: 1,
       }
-      // console.log('post_data', post_data)
       apis.report_report_check(post_data).then(res => {
         const { data, errCode, msg } = res;
         if (errCode === 0) {
@@ -173,9 +168,6 @@ export default {
     },
 
     // 改变邀请码
-    changeSelect: function() {
-
-    },
   }
 }
 </script>
