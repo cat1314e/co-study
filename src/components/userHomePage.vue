@@ -88,25 +88,6 @@
 <script>
 import apis from "../http/api.js"
 
-
-const findType01 = (array, type) => {
-  for (let i = 0; i < array.length; i++) {
-    let index = array[i]
-    if (index.reporter_invite_code === type) {
-      return index
-    }
-  }
-}
-
-const ifToHome = (array, type) => {
-  console.log('findType01(array, type)', findType01(array, type))
-  if (findType01(array, type) === undefined) {
-    return true
-  }
-  return false
-}
-
-
 export default {
   name: 'userPage',
   props: ['reportName'],
@@ -140,33 +121,7 @@ export default {
       apis.report_get_options().then(res => {
         const { data, errCode, msg } = res;
         if (errCode === 0) {
-        }
-      }).catch()
-    },
-    getData() {
-      let params = {
-        page: 1,
-        page_size: 10000,
-        start_datetime: '',
-        end_datetime: '',
-        be_report_invite_code: null,
-        be_report_status: null,
-        report_type: null,
-        report_status: null,
-        report_content: null,
-        reporter_invite_code: null,
-      }
-      apis.report_get_data(params).then(res => {
-        const { data, errCode, msg } = res;
-        if (errCode === 0) {
-          this.userMessage = res.data.records
-          console.log(res.data.records)
-          let array = this.userMessage
-          let type = this.reportName
-          // 如果没有就返回
-          if (ifToHome(array, type) === true) {
-            this.$emit('fatherMethod')
-          }
+          // console.log('')
         }
       }).catch()
     },
@@ -236,7 +191,6 @@ export default {
         const { data, errCode, msg } = res;
         if (errCode === 0) {
           this.showUserDetentionRecord = false
-          this.getData()
         } else {
           alert(msg)
         }
