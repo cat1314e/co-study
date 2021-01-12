@@ -17,6 +17,7 @@
       </div>
       <div class="co-detain-text co-detain-len">
         <h4>拘留记录：</h4>
+<!--        <p>拘留时间：{{ nowTime }}~{{ getDetainOutTime() }}</p>-->
         <p>拘留时间：{{ nowTime }}</p>
         <p>截至时间：{{ getDetainOutTime() }}</p>
         <p>拘留类型：{{ report_type }}</p>
@@ -167,7 +168,7 @@ export default {
 }
 
 .co-detain-all{
-  font-size: 18px;
+  font-size: 16px;
 }
 #invitation{
   width: 35vw;
@@ -176,7 +177,7 @@ export default {
 .co-select{
   position: relative;
   left: 3%;
-  border-radius: 3px;
+  border-radius: 5px;
   background: white;
   width: 15vw;
   height: auto;

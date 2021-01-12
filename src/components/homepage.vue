@@ -168,7 +168,6 @@ export default {
           console.log('this.userMessage', this.userMessage)
           this.userMessage = []
           this.userMessage.push(this.getData(1))
-
         } else {
           alert(msg)
         }
