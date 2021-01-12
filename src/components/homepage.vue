@@ -1,24 +1,27 @@
 <template >
 <!--  v-show="1 === 2"-->
-  <div  class="co-home">
-    <Card class="co-card" :bordered="false" v-for="(m, i) in userMessage"
-          v-show="home_to_user === true"
-          v-bind:key="i"
-    >
-      <!--在todo里添加一个东西使整行被点击都会响应-->
-      <p>被举报人：<span @click="actionClickUser">{{ m.be_report_invite_code }}</span></p>
-      <p>被举报时间：{{ m.datetime }}</p>
-      <p>举报类型：{{ m.report_type }}</p>
-      <p>举报范围：{{ m.report_content }}</p>
-      <p>举报状态：{{ m.be_report_status }}</p>
-      <p>举报描述：{{ m.report_remark }}</p>
-      <img class="co-image" v-bind:src=m.avatar>
-      <div class="co-buttons-update" :data-id=m.id>
-        <button @click="actionClickHandle" class="co-button-update">处理</button>
-        <button @click="actionClickIgnore" class="co-button-update">忽略</button>
-        <button @click="actionClickDetain" class="co-button-update">拘留</button>
-      </div>
-    </Card>
+  <div  class="co-home" @touchstart="gtouchstart($event)" @touchmove="gtouchmove($event)" @touchend="gtouchend($event)">
+    <div v-for="(n, j) in userMessage" v-bind:key="j">
+      <Card class="co-card" :bordered="false" v-for="(m, i) in n"
+            v-show="home_to_user === true"
+            v-bind:key="i"
+      >
+        <!--在todo里添加一个东西使整行被点击都会响应-->
+        <p>被举报人：<span @click="actionClickUser" class="zhu">{{ m.be_report_invite_code }}</span></p>
+        <p>被举报时间：{{ m.datetime }}</p>
+        <p>举报类型：<span class="zhu">{{ m.report_type }}</span></p>
+        <p>举报范围：{{ m.report_content }}</p>
+        <p>举报状态：<span class="zhu">{{ m.be_report_status }}</span></p>
+        <p>举报描述：{{ m.report_remark }}</p>
+        <img class="co-image" v-bind:src=m.avatar>
+        <div class="co-buttons-update" :data-id=m.id>
+          <button @click="actionClickHandle" class="co-button-update">处理</button>
+          <button @click="actionClickIgnore" class="co-button-update">忽略</button>
+          <button @click="actionClickDetain" class="co-button-update">拘留</button>
+        </div>
+      </Card>
+    </div>
+
     <UserHomePage
         ref="child"
         v-show="home_to_user === false"
@@ -37,7 +40,6 @@ import apis from "../http/api.js"
 
 
 
-
 export default {
   name: 'home',
 
@@ -47,6 +49,8 @@ export default {
       home_to_user: true,
       user_test: '',
       co_id: '',
+      distance: 0,
+      userPage: 1,
     }
   },
   created() {
@@ -54,18 +58,32 @@ export default {
     this.getOptions()
   },
   methods: {
+    gtouchstart(e){
+      this.distance = e.targetTouches[0].pageY
+    },
+    gtouchmove(){
+    },
+    gtouchend(e){
+      this.distance -= e.changedTouches[0].pageY
+      if (this.distance > 30) {
+        this.userPage += 1
+        let t = this.userPage
+        this.getData(t)
+        console.log('this.userPage',this.userPage)
+      }
+    },
     getOptions: function() {
       apis.report_get_options().then(res => {
         const { data, errCode, msg } = res;
         if (errCode === 0) {
-          console.log('getOptions', res)
+          console.log('getOptions', data)
         }
       }).catch()
     },
-    getData() {
+    getData: function(t = 1) {
       let params = {
-        page: 1,
-        page_size: 10000,
+        page: t,
+        page_size: 10,
         start_datetime: '',
         end_datetime: '',
         be_report_invite_code: null,
@@ -79,7 +97,8 @@ export default {
         const { data, errCode, msg } = res;
         // console.log('data', res)
         if (errCode === 0) {
-          this.userMessage = res.data.records
+          // this.userMessage = res.data.records
+          this.userMessage.push(res.data.records)
           console.log(res.data.records)
         }
       }).catch()
@@ -102,7 +121,7 @@ export default {
       // 1用户 => 用户的备考目标，昵称，设置默认值
       //
       // 2 cowall 删除
-      // 3 评论  删除。
+      // 3 评论  删除
 
     },
     fatherMethod() {
@@ -115,8 +134,20 @@ export default {
       let iWant = self.closest('.co-buttons-update')
       this.co_id = iWant.dataset.id
       console.log('co_id', this.co_id)
+      let allWant = self.closest('.co-card')
+      let value = allWant.querySelectorAll('.zhu')
+      let be_report_invite_code = value[0].innerText
+      let report_type = value[1].innerText
+      let be_report_status = value[2].innerText
+      console.log('be_report_invite_code', be_report_invite_code)
       this.$router.push({
-        path:`/detain/${this.co_id}`
+        path:`/detain`,
+        query: {
+          co_id: this.co_id,
+          be_report_invite_code: be_report_invite_code,
+          report_type: report_type,
+          be_report_status: be_report_status,
+        }
       })
     },
 
@@ -134,8 +165,10 @@ export default {
       apis.report_report_check(post_data).then(res => {
         const { data, errCode, msg } = res;
         if (errCode === 0) {
-          this.getData()
-          // this.$router.push('/homepage')
+          console.log('this.userMessage', this.userMessage)
+          this.userMessage = []
+          this.userMessage.push(this.getData(1))
+
         } else {
           alert(msg)
         }

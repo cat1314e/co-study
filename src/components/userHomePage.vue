@@ -14,14 +14,15 @@
       </p>
       <div class="co-buttons-update">
         <button  @click="updateDetentionRecordButton" v-if="reporterDetentionInfo.detention_type !== '其他'" class="co-button-update">修改期限</button>
-        <button v-if="reporterDetentionInfo.detention_type !== '其他'" class="co-button-update">立即放出</button>
+        <button  @click="releaseDetentionRecordButton" v-if="reporterDetentionInfo.detention_type !== '其他'" class="co-button-update">立即放出</button>
         <button @click="actionClickUserBack" class="co-button-update">返回</button>
       </div>
     </Card>
-    <Card class="co-card" :bordered="false" v-for="(s, i) in reporterDetentionInfo.records"
+    <Card class="co-card"
+          :bordered="false"
+          v-for="(s, i) in reporterDetentionInfo.records"
           v-bind:key="i"
     >
-      <!--在todo里添加一个label使整行被点击都会响应-->
       <p><span >被举报人：{{ reportName }}</span></p>
       <div v-for="(m, n) in s"
            v-bind:key="n"
@@ -63,6 +64,20 @@
    </div>
 </div>
 
+<div class="co-chang-days" v-show="liberateDay === true" >
+  <div class="co-chang-day"
+  >
+    <p>确认放出该用户么？</p>
+    <hr>
+    <p>确认后该用户将解封!</p>
+    <br>
+    <div class="button-judge">
+      <span @click="userLiberateCancel" class="co-judge">取消</span>
+      <span @click="userLiberateDetermine" class="co-judge">确定</span>
+    </div>
+  </div>
+</div>
+
 </div>
 
 
@@ -100,6 +115,7 @@ export default {
       co_id: '',
       changDays: false,
       personalShow: false,
+      liberateDay: false,
       reporterDetentionInfo: {
         status: 0,
         record_time: null,
@@ -117,8 +133,6 @@ export default {
     }
   },
   created() {
-    // this.getUserDetentionInfo()
-    // this.getData()
     this.getOptions()
   },
   methods: {
@@ -126,7 +140,6 @@ export default {
       apis.report_get_options().then(res => {
         const { data, errCode, msg } = res;
         if (errCode === 0) {
-          // console.log('getOptions', res)
         }
       }).catch()
     },
@@ -145,7 +158,6 @@ export default {
       }
       apis.report_get_data(params).then(res => {
         const { data, errCode, msg } = res;
-        // console.log('data', res)
         if (errCode === 0) {
           this.userMessage = res.data.records
           console.log(res.data.records)
@@ -174,7 +186,7 @@ export default {
           this.reporterDetentionInfo.ban_days = data.ban_days;
           this.reporterDetentionInfo.records = data.records
         } else {
-          // alert(msg)
+          alert(msg)
         }
       }).catch()
     },
@@ -185,13 +197,17 @@ export default {
       this.$emit('fatherMethod')
     },
 
+    // 放出按钮
+    releaseDetentionRecordButton: function() {
+      this.personalShow = !this.personalShow
+      this.liberateDay = !this.liberateDay
+    },
     // 修改期限
     updateDetentionRecordButton: function() {
       this.changDays = !this.changDays
       this.personalShow = !this.personalShow
       this.getBeReporterLastStatus()
       // alert('sadd')
-
     },
 
     getModalUpdateDetentionMsg() {
@@ -204,6 +220,31 @@ export default {
       }
     },
 
+    updateDetentionRecord(type) {
+      if (type === 1 && this.modalUpdateDetentionData.ban_days < 1) {
+        alert('天数不能小于1')
+        return
+      }
+      let post_data = {
+        update_type: type,
+        invite_code: this.reportName,
+        detention_time: this.modalUpdateDetentionData.detention_time,
+        ban_days: this.modalUpdateDetentionData.ban_days,
+        detention_type: this.reporterDetentionInfo.detention_type
+      };
+      apis.report_update_detention_record(post_data).then(res => {
+        const { data, errCode, msg } = res;
+        if (errCode === 0) {
+          this.showUserDetentionRecord = false
+          this.getData()
+        } else {
+          alert(msg)
+        }
+      }).catch(err => {
+        alert('接口异常')
+      })
+
+    },
     // 修改期限的数据
     getBeReporterLastStatus() {
       let params = {
@@ -224,15 +265,28 @@ export default {
       })
     },
     // 确定和取消
+    //
     userClickDetermine: function() {
+      this.updateDetentionRecord(1)
       this.changDays = !this.changDays
       this.personalShow = !this.personalShow
-
     },
     userClickCancel: function() {
       this.changDays = !this.changDays
       this.personalShow = !this.personalShow
     },
+    userLiberateDetermine: function() {
+      this.updateDetentionRecord(1)
+      this.personalShow = !this.personalShow
+      this.liberateDay = !this.liberateDay
+
+    },
+    userLiberateCancel: function() {
+      this.personalShow = !this.personalShow
+      this.liberateDay = !this.liberateDay
+    },
+
+
 
   },
 }

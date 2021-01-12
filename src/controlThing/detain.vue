@@ -1,35 +1,35 @@
 <template>
   <div class="co-detain-all">
     <form method="get" class="co-detain-form">
-      <label for="invitation">邀请码</label>
-      <input id="invitation" :value=userMessage.be_report_invite_code type="text"/>
+      <label for="invitation">邀请码：  </label>
+      <input id="invitation" :value=be_report_invite_code  type="text"/>
       <input class="co-select" type="submit" value="查询">
     </form>
-    <div class="co-detain-text">
-      <div>
-        <h3>拘留：</h3>
-        <label for="downMenu">拘留天数</label>
+<!--    <div class="co-detain-text">-->
+      <div class="co-detain-text">
+        <h4>拘留：</h4>
+        <label for="downMenu">拘留天数： </label>
         <select id="downMenu" v-model="selected">
           <option v-for="(option, i) in options " :key="i" :value ="option.value">{{ option.text }}</option>
         </select>
-        <p>预计于{{ getDetainOutTime() }}释放</p>
+        <p>预计于 {{ getDetainOutTime() }} 释放</p>
         <button @click="detainClick" class="co-detain-sure">确定</button>
       </div>
-      <div class="co-detain-len">
-        <h3>拘留记录：</h3>
-        <div>拘留时间：{{ nowTime }} 至
-          <br>{{ getDetainOutTime() }}</div>
-        <p>拘留类型：{{ userMessage.report_type }}</p>
-        <p>拘留来源：{{ userMessage.be_report_status }}</p>
+      <div class="co-detain-text co-detain-len">
+        <h4>拘留记录：</h4>
+        <p>拘留时间：{{ nowTime }}</p>
+        <p>截至时间：{{ getDetainOutTime() }}</p>
+        <p>拘留类型：{{ report_type }}</p>
+        <p>拘留来源：{{ be_report_status }}</p>
       </div>
-    </div>
+<!--    </div>-->
   </div>
 
 </template>
 
 <script>
 import apis from "../http/api.js"
-// import tools from '../http/tool.js'
+
 
 const demoDate = function() {
   // 时间标准库
@@ -70,9 +70,9 @@ export default {
   data: function(){
     let nowTime = demoDate()
     let options = [
-      {text: '一天', value: 1},
-      {text: '三天', value: 3},
-      {text: '七天', value: 7},
+      {text: '1 天', value: 1},
+      {text: '2 天', value: 3},
+      {text: '7 天', value: 7},
     ]
 
     return {
@@ -82,57 +82,45 @@ export default {
       options: options,
       userMessage: {},
       detention_type: null,
+      be_report_invite_code: '',
+      report_type: '',
+      be_report_status: '',
     }
   },
   created: function() {
-    let r = this.$route.params.co_id
-    this.co_id = r
+    this.getNowTime()
 
+    let r = this.$route.query.co_id
+    this.co_id = r
+    console.log('r', r)
     // 获取数据，
-    this.getData()
+    this.be_report_invite_code = this.$route.query.be_report_invite_code
+    this.report_type = this.$route.query.report_type
+    this.be_report_status = this.$route.query.be_report_status
+    this.getOptions()
   },
   watch: {
     // 如果路由有变化，会再次执行该方法
     '$route': 'create',
   },
   methods: {
-
-    // 拿到数据
-    getData() {
-      let params = {
-        page: 1,
-        page_size: 10000,
-        start_datetime: '',
-        end_datetime: '',
-        be_report_invite_code: null,
-        be_report_status: null,
-        report_type: null,
-        report_status: null,
-        report_content: null,
-        reporter_invite_code: null,
-      }
-      apis.report_get_data(params).then(res => {
-        const { data, errCode, msg } = res;
-        if (errCode === 0) {
-          let array = res.data.records
-          this.userMessage = findId(array, this.co_id)
-          this.getOptions()
-        }
-      }).catch()
-    },
     getOptions: function() {
       apis.report_get_options().then(res => {
         const { data, errCode, msg } = res;
         if (errCode === 0) {
           let typeArray = res.data.reportTypeList
-          let type1 = findType(typeArray, this.userMessage.report_type)
+          let type1 = findType(typeArray, this.report_type)
+          console.log('type1', type1)
           this.detention_type = type1.value
         }
       }).catch()
     },
+    getNowTime() {
+      this.nowTime = this.$moment(this.nowTime).format('YYYY-MM-DD HH:mm:ss')
+    },
 
     getDetainOutTime() {
-        let endDateTime = this.$moment(this.nowTime).add(this.selected, 'days').format("YYYY-MM-DD")
+        let endDateTime = this.$moment(this.nowTime).add(this.selected, 'days').format('YYYY-MM-DD HH:mm:ss')
         return endDateTime
     },
     //单条核实按钮
@@ -141,7 +129,7 @@ export default {
       console.log('countDay', countDay)
       this.nowTime = demoDate()
 
-      let id = this.userMessage.id
+      let id = this.co_id
       let post_data = {
         // this.getOptions()
         // ban_days: 7
@@ -174,7 +162,7 @@ export default {
 
 <style>
 .co-detain-form{
-  border-bottom: solid black 1px;
+  border-bottom: solid #a1a0a0 1px;
   padding: 10px;
 }
 
@@ -182,38 +170,47 @@ export default {
   font-size: 18px;
 }
 #invitation{
-  width: 50vw;
-  height: 20px;
+  width: 35vw;
+  height: 30px;
 }
 .co-select{
-  width: 20vw;
-  height: 30px;
+  position: relative;
+  left: 3%;
+  border-radius: 3px;
+  background: white;
+  width: 15vw;
+  height: auto;
+  font-size: 16px;
+  border: 1px solid #a1a0a0;
+
 }
 
 .co-detain-text{
-  line-height: 300%;
+  line-height: 230%;
   padding: 10px;
 }
 
 #downMenu{
   width: 50vw;
   border-radius: 3px;
+  height: 30px;
 }
 .co-detain-sure{
   position: relative;
-  width: 80vw;
+  width: 90vw;
   height: auto;
   border-radius: 3px;
-  left: 5vw;
-  background: #e8e8e8;
+  left: 1%;
+  background: #ffffff;
+  border: 1px solid #a1a0a0;
 
 }
 
 .co-detain-len{
   position: relative;
   top: 10px;
-  border-top: solid black 1px;
-  border-bottom: solid black 1px;
-  /*padding: 10px;*/
+  border-top: solid #a1a0a0 1px;
+  border-bottom: solid #a1a0a0 1px;
+  padding-bottom: 10px;
 }
 </style>

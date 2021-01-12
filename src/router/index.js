@@ -29,7 +29,7 @@ const routes = [
         component: homepage,
     },
     {
-        path: '/detain/:co_id',
+        path: '/detain',
         name: 'detain',
         component: detain,
     },
