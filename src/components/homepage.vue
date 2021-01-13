@@ -1,8 +1,8 @@
 <template >
 <!--  v-show="1 === 2"-->
   <div  class="co-home" @touchstart="gtouchstart($event)" @touchmove="gtouchmove($event)" @touchend="gtouchend($event)">
-    <div v-for="(n, j) in userMessage" v-bind:key="j">
-      <Card class="co-card" :bordered="false" v-for="(m, i) in n"
+<!--    <div v-for="(n, j) in userMessage" v-bind:key="j">-->
+      <Card class="co-card" :bordered="false" v-for="(m, i) in userMessage"
             v-show="home_to_user === true"
             v-bind:key="i"
       >
@@ -13,14 +13,22 @@
         <p>举报范围：{{ m.report_content }}</p>
         <p>举报状态：<span class="zhu">{{ m.be_report_status }}</span></p>
         <p>举报描述：{{ m.report_remark }}</p>
-        <img class="co-image" v-bind:src=m.avatar>
+        <img class="co-image" v-bind:src=getUrl(m.image)>
         <div class="co-buttons-update" :data-id=m.id>
           <button @click="actionClickHandle" class="co-button-update">处理</button>
           <button @click="actionClickIgnore" class="co-button-update">忽略</button>
           <button @click="actionClickDetain" class="co-button-update">拘留</button>
         </div>
+<!--        <div class="zhu-handle">-->
+<!--        </div>-->
+<!--        <div class="co-handle">-->
+
+<!--        </div>-->
+
+
+
       </Card>
-    </div>
+<!--    </div>-->
 
     <UserHomePage
         ref="child"
@@ -38,7 +46,16 @@
 import userHomePage from './userHomePage'
 import apis from "../http/api.js"
 
-
+const removeArray01 = (array, id) => {
+  let index
+  for (let i = 0; i < array.length; i++) {
+    if (array[i].id === id) {
+      index = i
+      break
+    }
+  }
+  array.splice(index, 1)
+}
 
 export default {
   name: 'home',
@@ -46,11 +63,17 @@ export default {
   data: function() {
     return {
       userMessage: [],
+      pageOption: {
+        page_size: 10,
+        total: 100,
+        page: 1
+      },
       home_to_user: true,
       user_test: '',
       co_id: '',
       distance: 0,
       userPage: 1,
+      pngUrl: 'https://co-study.oss-cn-shanghai.aliyuncs.com/app/image/report/',
     }
   },
   created() {
@@ -83,7 +106,7 @@ export default {
     getData: function(t = 1) {
       let params = {
         page: t,
-        page_size: 10,
+        page_size: this.pageOption.page_size,
         start_datetime: '',
         end_datetime: '',
         be_report_invite_code: null,
@@ -97,9 +120,10 @@ export default {
         const { data, errCode, msg } = res;
         // console.log('data', res)
         if (errCode === 0) {
-          // this.userMessage = res.data.records
-          this.userMessage.push(res.data.records)
-          console.log(res.data.records)
+          // this.userMessage.concat(res.data.records)
+          this.userMessage = [...this.userMessage, ...data.records]
+          this.pageOption.total = data.count
+          console.log(res.data)
         }
       }).catch()
     },
@@ -128,7 +152,10 @@ export default {
       console.log('测试')
       this.home_to_user = true
     },
-
+    getUrl(image) {
+      let url = this.pngUrl + image
+      return url
+    },
     actionClickDetain: function(event) {
       let self = event.target
       let iWant = self.closest('.co-buttons-update')
@@ -144,14 +171,13 @@ export default {
         path:`/detain`,
         query: {
           co_id: this.co_id,
+          total: this.pageOption.total,
           be_report_invite_code: be_report_invite_code,
           report_type: report_type,
           be_report_status: be_report_status,
         }
       })
     },
-
-
     actionClickIgnore(event) {
       let self = event.target
       let iWant = self.closest('.co-buttons-update')
@@ -165,9 +191,8 @@ export default {
       apis.report_report_check(post_data).then(res => {
         const { data, errCode, msg } = res;
         if (errCode === 0) {
-          console.log('this.userMessage', this.userMessage)
-          this.userMessage = []
-          this.userMessage.push(this.getData(1))
+          let numberId = Number(id)
+          removeArray01(this.userMessage, numberId)
         } else {
           alert(msg)
         }
@@ -210,5 +235,22 @@ export default {
 .co-image{
   width: 60%;
 }
-
+.zhu-handle{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0.1;
+  background: black;
+}
+.co-handle{
+  position: fixed;
+  width: 300px;
+  height: 200px;
+  background: silver;
+  top: 40%;
+  left: 50%;
+  transform: translateX(-50%)translateY(-50%);
+}
 </style>

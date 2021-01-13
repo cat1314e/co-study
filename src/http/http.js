@@ -28,9 +28,7 @@ let studyURL;
 switch (Host.env) {
     case "pub":
         baseURL = Host.PublicHost;// 生产环境
-        // baseURL = Host.testHost;// 测试环境
         studyURL = Host.studyHost // 生产环境
-        // studyURL = Host.testStudyHost // 测试环境
         break;
     case "test":
         baseURL = Host.testHost;
@@ -162,9 +160,9 @@ const ajax = (method, url, data = {}, host = null, responseType = {}, coAuthoriz
     method = method.toLowerCase();
     // data.token = Tools.cookie.getCookie('token')
     if (host === 'study') {
-        // instance.defaults.baseURL = studyURL
+        instance.defaults.baseURL = studyURL
         // instance.defaults.baseURL = Host.studyHost
-        instance.defaults.baseURL = Host.testStudyHost
+        // instance.defaults.baseURL = Host.testStudyHost
         // instance.defaults.baseURL = Host.localStudyHost
         // instance.defaults.baseURL = Host.lanStudyHost
     }else {

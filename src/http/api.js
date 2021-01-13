@@ -23,6 +23,7 @@ const apis = {
 
     report_get_options:(params) => ajax('get', '/v2/report/get/report_filter_options', params, 'study'),
     report_get_data: (params) => ajax('get', '/v2/report/get/report_record/need', params, 'study'),
+    // report_get_data: (params) => ajax('get', '/v2/report/phone/get/report_record/need', params, 'study'),
     report_get_be_reporter_status: (params) => ajax('get', '/v2/report/get/be_reporter/status', params, 'study'),
     report_report_check: (params) => ajax('post', '/v2/report/report_check', params, 'study'),
     report_get_user_detention_record: (params) => ajax('get', '/v2/report/get/user_detention_record', params, 'study'),

@@ -18,23 +18,26 @@
           <option v-for="(option, i) in options " :key="i" :value ="option.value">{{ option.text }}</option>
         </select>
         <p>预计于 {{ getDetainOutTime() }} 释放</p>
-        <button @click="detainClick" class="co-detain-sure">确定</button>
+        <button @click="detainClick" :disabled=canNoDetain class="co-detain-sure">{{ doDetain }}</button>
       </div>
+
       <div class="co-detain-text co-detain-len">
         <div v-if="reporterDetentionInfo.records[0].length !== 0">
-          <Card class="co-card" :bordered="false">
+          <div class="co-card" :bordered="false">
             <p>最近封禁详情：{{ be_report_invite_code }}</p>
-            <p>{{ reporterDetentionInfo.record_time }}</p>
-            <p>{{ reporterDetentionInfo.detention_type }}:</p>
-            <p>
-              <span>{{ reporterDetentionInfo.who_detention }}</span>
-              <span>{{ reporterDetentionInfo.ban_days }}</span>
-            </p>
+            <div v-if="reporterDetentionInfo.record_time !== null">
+              <p>{{ reporterDetentionInfo.record_time }}</p>
+              <p>{{ reporterDetentionInfo.detention_type }}:</p>
+              <p>
+                <span>{{ reporterDetentionInfo.who_detention }}</span>
+                <span>{{ reporterDetentionInfo.ban_days }}</span>
+              </p>
+            </div>
             <p>
               以下为历史封禁信息：
             </p>
-          </Card>
-          <Card class="co-card"
+          </div>
+          <div class="co-card"
                 :bordered="false"
                 v-for="(s, i) in reporterDetentionInfo.records"
                 v-bind:key="i"
@@ -46,14 +49,14 @@
               <p>{{ m.record_time }}</p>
               <p>{{ m.record_desc }}{{ m.ban_days }}</p>
             </div>
-          </Card>
+          </div>
           <br>
         </div>
         <div v-else>
-          <Card class="co-card" :bordered="false">
+          <div class="co-card" :bordered="false">
             <!--在todo里添加一个label使整行被点击都会响应-->
             <p> 暂无封禁记录～</p>
-          </Card>
+          </div>
         </div>
       </div>
 <!--    </div>-->
@@ -65,20 +68,6 @@
 import apis from "../http/api.js"
 
 
-const demoDate = function() {
-  // 时间标准库
-  let s = ''
-  let d = new Date()
-  let nian = d.getFullYear()
-  let yue = d.getMonth() + 1
-  let ri = d.getDate()
-  let shi = d.getHours()
-  let fen = d.getMinutes()
-  let miao = d.getSeconds()
-  s = `${nian}-${yue}-${ri} ${shi}:${fen}:${miao}`
-  return s
-}
-
 const findId = (array, id) => {
   id = Number(id)
   for (let i = 0; i < array.length; i++) {
@@ -87,6 +76,17 @@ const findId = (array, id) => {
       return index
     }
   }
+}
+
+const findAllId = (array, intCode) => {
+  let result = []
+  for (let i = 0; i < array.length; i++) {
+    if (array[i].be_report_invite_code === intCode) {
+      let index = array[i].id.toString()
+      result.push(index)
+    }
+  }
+  return result
 }
 
 const findType = (array, type) => {
@@ -102,38 +102,37 @@ const findType = (array, type) => {
 export default {
   name: 'detain',
   data: function(){
-    let nowTime = demoDate()
     let options = [
       {text: '1 天', value: 1},
-      {text: '2 天', value: 3},
+      {text: '3 天', value: 3},
       {text: '7 天', value: 7},
     ]
 
     return {
       co_id: '',
-      nowTime: nowTime,
       selected: 1,
       options: options,
-      userMessage: {},
+      userMessage: [],
       detention_type: null,
       be_report_invite_code: '',
       report_type: '',
       be_report_status: '',
       reportTypeList: [],
       deType: 0,
-
       reporterDetentionInfo: {
         status: 0,
         record_time: null,
         who_detention: null,
         detention_type: null,
         ban_days: null,
-        records: [[]]
+        records: [[]],
       },
+      total: 100,
+      canNoDetain: false,
+      doDetain: '确定',
     }
   },
   created: function() {
-    this.getNowTime()
     // 获取数据，
     let r = this.$route.query.co_id
     this.co_id = r
@@ -141,7 +140,9 @@ export default {
     this.getUserDetentionInfo(this.be_report_invite_code)
     this.report_type = this.$route.query.report_type
     this.be_report_status = this.$route.query.be_report_status
+    this.total = this.$route.query.total
     this.getOptions()
+    this.getData()
   },
   watch: {
     // 如果路由有变化，会再次执行该方法
@@ -152,22 +153,46 @@ export default {
       apis.report_get_options().then(res => {
         const { data, errCode, msg } = res;
         if (errCode === 0) {
-          console.log('res', res)
           this.reportTypeList = res.data.reportTypeList
           let typeArray = res.data.reportTypeList
           let type1 = findType(typeArray, this.report_type)
-          console.log('type1', type1)
           this.detention_type = type1.value
         }
       }).catch()
     },
-    getNowTime() {
-      this.nowTime = this.$moment(this.nowTime).format('YYYY-MM-DD HH:mm:ss')
+    getData: function(t = 1) {
+      let params = {
+        page: t,
+        page_size: this.total,
+        start_datetime: '',
+        end_datetime: '',
+        be_report_invite_code: null,
+        be_report_status: null,
+        report_type: null,
+        report_status: null,
+        report_content: null,
+        reporter_invite_code: null,
+      }
+      apis.report_get_data(params).then(res => {
+        const { data, errCode, msg } = res;
+        // console.log('data', res)
+        if (errCode === 0) {
+          this.userMessage = data.records
+          this.total = data.count
+        }
+      }).catch()
     },
 
     getDetainOutTime() {
-        let endDateTime = this.$moment(this.nowTime).add(this.selected, 'days').format('YYYY-MM-DD HH:mm:ss')
+      let time = this.reporterDetentionInfo.record_time
+      if (time !== null){
+        let endDateTime = this.$moment(time).add(this.selected, 'days').format('YYYY-MM-DD HH:mm:ss')
         return endDateTime
+      } else {
+        let endDateTime = this.$moment().add(this.selected, 'days').format('YYYY-MM-DD HH:mm:ss')
+        return endDateTime
+      }
+
     },
 
     getUserDetentionInfo: function(str){
@@ -177,7 +202,7 @@ export default {
       }
       apis.report_get_user_detention_record(params).then(res => {
         const { data, errCode, msg } = res;
-        console.log('data', data)
+        // console.log('data', data)
         if (errCode === 0) {
           this.reporterDetentionInfo.status = data.status;
           this.reporterDetentionInfo.record_time = data.record_time;
@@ -191,6 +216,7 @@ export default {
       }).catch()
     },
 
+
     // 查询按钮
     invitationSelect: function() {
       let value = document.querySelector('#invitation')
@@ -198,33 +224,45 @@ export default {
       if (str === '') {
         return
       }
-      console.log('value', value)
+      this.be_report_invite_code = str
       this.getUserDetentionInfo(str)
-    },
-    //单条核实按钮
-    detainClick: function() {
-      let countDay = this.selected
-      console.log('countDay', countDay)
-      this.nowTime = demoDate()
-
-      let id = this.co_id
-      let post_data = {
-        // this.getOptions()
-        // ban_days: 7
-        // check_type: 1
-        // detention_time: "2021-01-07 14:40:31"
-        // detention_type: 1
-        // id: "488"
-        id: id.toString(),
-        detention_time: this.nowTime,
-        ban_days: countDay,
-        detention_type: this.detention_type,
-        check_type: 1,
+      let codeIds = this.getReportIds()
+      console.log('codeIds', codeIds)
+      if (codeIds.length === 0) {
+        this.canNoDetain = true
+        this.doDetain = '改用户当前未被举报'
+      } else {
+        this.canNoDetain = false
+        this.doDetain = '确定'
       }
+    },
+
+    getReportIds() {
+      this.getData()
+      let array = this.userMessage
+      let intCode = this.be_report_invite_code
+      let codeIds =  findAllId(array, intCode)
+      return codeIds
+    },
+    // 批量核实
+    detainClick() {
+      let countDay = this.selected
+      console.log('')
+      let detention_time = this.getDetainOutTime()
+      let codeIds = this.getReportIds()
+      let post_data = {
+        id: codeIds.join(','),
+        detention_time: detention_time,
+        ban_days: countDay,
+        detention_type: this.deType,
+        check_type: 1
+      };
       apis.report_report_check(post_data).then(res => {
         const { data, errCode, msg } = res;
+        console.log('删除', res)
         if (errCode === 0) {
-          this.$router.push('/homepage')
+          console.log('批量删除成功')
+          this.$router.replace('/homepage')
         } else {
           alert(msg)
         }
@@ -232,7 +270,6 @@ export default {
         alert('接口异常')
       })
     },
-    // 改变邀请码
   }
 }
 </script>
@@ -261,20 +298,27 @@ export default {
   border: 1px solid #a1a0a0;
 
 }
+.co-card{
+  /*padding: 10px;*/
+  width: 100%;
+  border: none;
+}
 
 .co-detain-text{
   line-height: 230%;
   padding: 10px;
 }
 #co-deType{
-  width: 30vw;
+  width: 28vw;
   border-radius: 3px;
   height: 30px;
+  background: white;
 }
 #downMenu{
   width: 50vw;
   border-radius: 3px;
   height: 30px;
+  background: white;
 }
 .co-detain-sure{
   position: relative;
