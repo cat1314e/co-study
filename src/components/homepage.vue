@@ -1,6 +1,6 @@
 <template >
 <!--  v-show="1 === 2"-->
-  <div  class="co-home" @touchstart="gtouchstart($event)" @touchmove="gtouchmove($event)" @touchend="gtouchend($event)">
+  <div  class="co-home" @touchstart="goTouchStart($event)" @touchmove="gtouchmove($event)" @touchend="goTouchEnd($event)">
     <div class="co-home-title">
       <span class="co-no-been co-been"
             :class="{ beenActive: ifActive === true }"
@@ -21,7 +21,7 @@
             v-bind:key="i"
       >
         <!--在todo里添加一个东西使整行被点击都会响应-->
-        <p>被举报人：<span @click="actionClickUser" class="zhu">{{ m.be_report_invite_code }}</span></p>
+        <p>被举报人：<span @click="actionClickUser(i)" class="zhu">{{ m.be_report_invite_code }}</span></p>
         <p>被举报时间：{{ m.datetime }}</p>
         <p>举报类型：<span class="zhu">{{ m.report_type }}</span></p>
         <p>举报范围：{{ m.report_content }}</p>
@@ -48,9 +48,9 @@
       </Card>
 
       <unVerifyHomePage
+          ref="Verify"
           v-show="home_to_verifyPage === true"
           @homePageMethod="homePageMethod"
-
       >
       </unVerifyHomePage>
 
@@ -110,17 +110,18 @@ export default {
     this.getOptions()
   },
   methods: {
-    gtouchstart(e){
+    goTouchStart(e){
       this.distance = e.targetTouches[0].pageY
     },
-    gtouchmove(){
+    goTouchMove(){
     },
-    gtouchend(e){
+    goTouchEnd(e){
       this.distance -= e.changedTouches[0].pageY
       if (this.distance > 30) {
         this.userPage += 1
         let t = this.userPage
         this.getData(t)
+        this.$refs.Verify.getVerifyData(t)
         console.log('this.userPage',this.userPage)
       }
     },
@@ -147,7 +148,6 @@ export default {
       }
       apis.report_get_data(params).then(res => {
         const { data, errCode, msg } = res;
-        // console.log('data', res)
         if (errCode === 0) {
           // this.userMessage.concat(res.data.records)
           this.userMessage = [...this.userMessage, ...data.records]
@@ -162,18 +162,19 @@ export default {
       this.ifActive = true
       this.homePage = true
       this.home_to_verifyPage = false
+      this.home_to_userPage = false
     },
     actionIsVerify: function() {
       this.ifActive = false
       this.homePage = false
       this.home_to_verifyPage = true
+      this.home_to_userPage = false
     },
     // 切换到个人页面
-    actionClickUser: function(event) {
+    actionClickUser: function(index) {
       this.home_to_userPage = true
       this.homePage = false
-      this.user_test = event.target.innerText
-      console.log('this.user_test', this.user_test)
+      this.user_test = this.userMessage[index].be_report_invite_code
       this.$refs.child.getUserDetentionInfo(this.user_test)
     },
 

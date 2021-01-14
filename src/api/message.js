@@ -3,7 +3,7 @@ import pic from '../assets/logo.png'
 
 let n21 = [
     {
-        reportUserName: 'aaa1',
+        reportUserName: 'Kp54',
         reportTime: '2020-10-11 00:00',
         reportType: '啊是不是',
         reportRange: 'sadjwda',
@@ -12,7 +12,7 @@ let n21 = [
         reportInvite: 'asdb',
     },
     {
-        reportUserName: 'aaa2',
+        reportUserName: 'ToKU',
         reportTime: '2020-10-11 00:20',
         reportType: 'sadddw不是',
         reportRange: 'sadjwda',
@@ -21,7 +21,7 @@ let n21 = [
         reportInvite: 'asdb',
     },
     {
-        reportUserName: 'bbb3',
+        reportUserName: 'mIEv',
         reportTime: '2020-11-2 00:04',
         reportType: 'saddda',
         reportRange: 'sadjwda',
@@ -30,7 +30,7 @@ let n21 = [
         reportInvite: 'asd4',
     },
     {
-        reportUserName: 'asff',
+        reportUserName: 'gAMK',
         reportTime: '2020-11-2 00:00',
         reportType: 'saddda',
         reportRange: 'sa',
@@ -39,7 +39,7 @@ let n21 = [
         reportInvite: 'asd5',
     },
     {
-        reportUserName: 'asff',
+        reportUserName: 'MkoD',
         reportTime: '2020-11-2 02:00',
         reportType: 'aefsrfa',
         reportRange: 'sa',
@@ -48,7 +48,7 @@ let n21 = [
         reportInvite: 'asd5',
     },
     {
-        reportUserName: 'cccc',
+        reportUserName: 'SEbK',
         reportTime: '2020-11-2 00:00',
         reportType: 'aefsrfa',
         reportRange: 'sa',

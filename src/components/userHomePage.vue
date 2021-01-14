@@ -13,8 +13,8 @@
         以下为历史封禁信息：
       </p>
       <div class="co-buttons-update">
-        <button  @click="updateDetentionRecordButton" v-if="reporterDetentionInfo.detention_type !== '其他'" class="co-button-update">修改期限</button>
-        <button  @click="releaseDetentionRecordButton" v-if="reporterDetentionInfo.detention_type !== '其他'" class="co-button-update">立即放出</button>
+        <button  @click="updateDetentionRecordButton" v-if="reporterDetentionInfo.status !== -1" class="co-button-update">修改期限</button>
+        <button  @click="releaseDetentionRecordButton" v-if="reporterDetentionInfo.status !== -1" class="co-button-update">立即放出</button>
         <button @click="actionClickUserBack" class="co-button-update">返回</button>
       </div>
     </Card>
@@ -55,7 +55,7 @@
               id="day"
               v-model="modalUpdateDetentionData.ban_days"
        >
-       <p>将在{{ getModalUpdateDetentionMsg() }}放出</p>
+       <p>将在{{ getModalUpdateDetentionMsg() }}</p>
      </form>
      <div class="button-judge">
        <span @click="userClickCancel" class="co-judge">取消</span>
@@ -90,10 +90,10 @@ import apis from "../http/api.js"
 
 export default {
   name: 'userPage',
-  props: ['reportName'],
+  // props: ['reportName'],
   data: function() {
     return {
-      co_id: '',
+      reportName: '',
       changDays: false,
       personalShow: false,
       liberateDay: false,
@@ -111,6 +111,7 @@ export default {
         ban_days: 0,
         min_ban_days: null
       },
+      backOptions: [],
     }
   },
   created() {
@@ -121,11 +122,12 @@ export default {
       apis.report_get_options().then(res => {
         const { data, errCode, msg } = res;
         if (errCode === 0) {
-          // console.log('')
+          this.backOptions = data
         }
       }).catch()
     },
     getUserDetentionInfo: function(str){
+      this.reportName = str
       console.log('invite_code', str)
       let params = {
         invite_code: str
@@ -135,6 +137,7 @@ export default {
         console.log('data', data)
         if (errCode === 0) {
           this.reporterDetentionInfo.status = data.status;
+          console.log('status', data.status)
           this.reporterDetentionInfo.record_time = data.record_time;
           this.reporterDetentionInfo.who_detention = data.who_detention;
           this.reporterDetentionInfo.detention_type = data.detention_type;
@@ -148,7 +151,6 @@ export default {
 
     // 返回 父组件
     actionClickUserBack: function() {
-
       this.$emit('fatherMethod')
     },
 
