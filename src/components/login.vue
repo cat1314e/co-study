@@ -23,7 +23,7 @@
 
 </template>
 <script>
-import pic from '../assets/logo.png'
+import pic from '../assets/coStudy.png'
 import common from '../utils/utils'
 import apis from "../http/api"
 export default {

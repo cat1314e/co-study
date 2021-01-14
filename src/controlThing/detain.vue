@@ -241,13 +241,12 @@ export default {
       this.getData()
       let array = this.userMessage
       let intCode = this.be_report_invite_code
-      let codeIds =  findAllId(array, intCode)
+      let codeIds = findAllId(array, intCode)
       return codeIds
     },
     // 批量核实
     detainClick() {
       let countDay = this.selected
-      console.log('')
       let detention_time = this.getDetainOutTime()
       let codeIds = this.getReportIds()
       let post_data = {
@@ -262,7 +261,7 @@ export default {
         console.log('删除', res)
         if (errCode === 0) {
           console.log('批量删除成功')
-          this.$router.replace('/homepage')
+          this.$router.push('/homepage')
         } else {
           alert(msg)
         }
@@ -305,12 +304,12 @@ export default {
 }
 
 .co-detain-text{
-  line-height: 230%;
+  line-height: 270%;
   padding: 10px;
 }
 #co-deType{
   width: 28vw;
-  border-radius: 3px;
+  border-radius: 5px;
   height: 30px;
   background: white;
 }
@@ -324,11 +323,10 @@ export default {
   position: relative;
   width: 90vw;
   height: auto;
-  border-radius: 3px;
+  border-radius: 5px;
   left: 1%;
   background: #ffffff;
   border: 1px solid #a1a0a0;
-
 }
 
 .co-detain-len{

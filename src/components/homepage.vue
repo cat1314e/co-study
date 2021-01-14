@@ -1,7 +1,6 @@
 <template >
 <!--  v-show="1 === 2"-->
   <div  class="co-home" @touchstart="gtouchstart($event)" @touchmove="gtouchmove($event)" @touchend="gtouchend($event)">
-<!--    <div v-for="(n, j) in userMessage" v-bind:key="j">-->
       <Card class="co-card" :bordered="false" v-for="(m, i) in userMessage"
             v-show="home_to_user === true"
             v-bind:key="i"
@@ -13,22 +12,25 @@
         <p>举报范围：{{ m.report_content }}</p>
         <p>举报状态：<span class="zhu">{{ m.be_report_status }}</span></p>
         <p>举报描述：{{ m.report_remark }}</p>
-        <img class="co-image" v-bind:src=getUrl(m.image)>
+        <div >
+          <img class="co-image" v-bind:src=getUrl(m.image)>
+        </div>
         <div class="co-buttons-update" :data-id=m.id>
           <button @click="actionClickHandle" class="co-button-update">处理</button>
           <button @click="actionClickIgnore" class="co-button-update">忽略</button>
           <button @click="actionClickDetain" class="co-button-update">拘留</button>
         </div>
-<!--        <div class="zhu-handle">-->
-<!--        </div>-->
-<!--        <div class="co-handle">-->
-
-<!--        </div>-->
-
-
-
+        <div class="zhu-handle" v-show="HandleYes">
+        </div>
+        <div class="co-handle" v-show="HandleYes">
+          <p>确定要处理该用户吗？</p>
+          <p>1.用户的备考目标，昵称，设置默认值</p>
+          <p>2.cowall 删除</p>
+          <p>3.评论  删除。</p>
+          <button class="co-pan-handle co-left" @click="actionHandleYes">确定</button>
+          <button class="co-pan-handle co-right" @click="actionHandleNo">取消</button>
+        </div>
       </Card>
-<!--    </div>-->
 
     <UserHomePage
         ref="child"
@@ -69,6 +71,7 @@ export default {
         page: 1
       },
       home_to_user: true,
+      HandleYes: false,
       user_test: '',
       co_id: '',
       distance: 0,
@@ -136,17 +139,26 @@ export default {
       this.$refs.child.getUserDetentionInfo(this.user_test)
     },
 
-    actionClickHandle: function(event) {
-      let self = event.target
-      let buttons = self.closest('.co-buttons-update')
-      let theButton = buttons.querySelectorAll('.co-button-update')[2]
-      let ign = theButton.dataset.id
+
+    actionHandleYes: function() {
+      this.HandleYes = !this.HandleYes
       // 删除这个邀请码的举报范围：
       // 1用户 => 用户的备考目标，昵称，设置默认值
       //
       // 2 cowall 删除
       // 3 评论  删除
 
+
+    },
+    actionHandleNo: function() {
+      this.HandleYes = !this.HandleYes
+    },
+    actionClickHandle: function(event) {
+      let self = event.target
+      let buttons = self.closest('.co-buttons-update')
+      let theButton = buttons.querySelectorAll('.co-button-update')[2]
+      let ign = theButton.dataset.id
+      this.HandleYes = !this.HandleYes
     },
     fatherMethod() {
       console.log('测试')
@@ -241,16 +253,30 @@ export default {
   height: 100%;
   top: 0;
   left: 0;
-  opacity: 0.1;
-  background: black;
+  background: beige;
 }
 .co-handle{
   position: fixed;
   width: 300px;
-  height: 200px;
-  background: silver;
+  height: auto;
+  background: white;
   top: 40%;
   left: 50%;
+  padding: 10px;
   transform: translateX(-50%)translateY(-50%);
+}
+.co-pan-handle{
+  position: relative;
+  background: white;
+  border: 1px gainsboro solid;
+  width: 100px;
+  border-radius: 5px;
+}
+
+.co-right{
+  left: 40px;
+}
+.co-left{
+  /*left: 10px;*/
 }
 </style>
