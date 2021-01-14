@@ -1,8 +1,23 @@
 <template >
 <!--  v-show="1 === 2"-->
   <div  class="co-home" @touchstart="gtouchstart($event)" @touchmove="gtouchmove($event)" @touchend="gtouchend($event)">
+    <div class="co-home-title">
+      <span class="co-no-been co-been"
+            :class="{ beenActive: ifActive === true }"
+            @click="actionNoVerify"
+      >
+        未核实
+      </span>
+      <span class="co-has-been co-been"
+            :class="{ beenActive: ifActive === false }"
+            @click="actionIsVerify"
+      >
+        已核实
+      </span>
+    </div>
+    <div>
       <Card class="co-card" :bordered="false" v-for="(m, i) in userMessage"
-            v-show="home_to_user === true"
+            v-show="homePage === true"
             v-bind:key="i"
       >
         <!--在todo里添加一个东西使整行被点击都会响应-->
@@ -32,19 +47,27 @@
         </div>
       </Card>
 
-    <UserHomePage
-        ref="child"
-        v-show="home_to_user === false"
-        @fatherMethod="fatherMethod"
-        v-bind:reportName="user_test"
-    >
-    </UserHomePage>
+      <unVerifyHomePage
+          v-show="home_to_verifyPage === true"
+          @homePageMethod="homePageMethod"
 
+      >
+      </unVerifyHomePage>
+
+      <UserHomePage
+          ref="child"
+          v-show="home_to_userPage === true"
+          @fatherMethod="fatherMethod"
+          v-bind:reportName="user_test"
+      >
+      </UserHomePage>
+    </div>
   </div>
 </template>
 
 
 <script>
+import unVerifyHomePage from './unVerifyHomePage'
 import userHomePage from './userHomePage'
 import apis from "../http/api.js"
 
@@ -65,12 +88,15 @@ export default {
   data: function() {
     return {
       userMessage: [],
+      ifActive: true,
       pageOption: {
         page_size: 10,
         total: 100,
         page: 1
       },
-      home_to_user: true,
+      homePage: true,
+      home_to_verifyPage: false,
+      home_to_userPage: false,
       HandleYes: false,
       user_test: '',
       co_id: '',
@@ -131,9 +157,21 @@ export default {
       }).catch()
     },
 
+    // 核实和未核实页面
+    actionNoVerify: function() {
+      this.ifActive = true
+      this.homePage = true
+      this.home_to_verifyPage = false
+    },
+    actionIsVerify: function() {
+      this.ifActive = false
+      this.homePage = false
+      this.home_to_verifyPage = true
+    },
     // 切换到个人页面
     actionClickUser: function(event) {
-      this.home_to_user = false
+      this.home_to_userPage = true
+      this.homePage = false
       this.user_test = event.target.innerText
       console.log('this.user_test', this.user_test)
       this.$refs.child.getUserDetentionInfo(this.user_test)
@@ -144,7 +182,6 @@ export default {
       this.HandleYes = !this.HandleYes
       // 删除这个邀请码的举报范围：
       // 1用户 => 用户的备考目标，昵称，设置默认值
-      //
       // 2 cowall 删除
       // 3 评论  删除
 
@@ -161,8 +198,23 @@ export default {
       this.HandleYes = !this.HandleYes
     },
     fatherMethod() {
-      console.log('测试')
-      this.home_to_user = true
+      const e = (selector) => document.querySelector(selector)
+      let selector = e('.beenActive')
+      if (selector.innerText.includes('未核实')) {
+        console.log('测试')
+        this.home_to_userPage = false
+        this.homePage = true
+      } else {
+        console.log('已核实')
+        this.home_to_verifyPage = true
+        this.home_to_userPage = false
+      }
+    },
+    homePageMethod(card) {
+      console.log('card', card)
+      this.home_to_verifyPage = false
+      this.home_to_userPage = true
+      this.$refs.child.getUserDetentionInfo(card)
     },
     getUrl(image) {
       let url = this.pngUrl + image
@@ -214,6 +266,7 @@ export default {
     }
   },
   components: {
+    unVerifyHomePage: unVerifyHomePage,
     UserHomePage: userHomePage,
   }
 }
@@ -225,11 +278,36 @@ export default {
   border: 1px solid #eee;
   padding: 2px 0;
   margin: 5px 0;
+  height: auto;
 }
 .co-home{
   background:#eee;
   padding: 5px;
   line-height: 5vh;
+}
+.co-home-title{
+  position: relative;
+  top: 0;
+  width: 100%;
+  padding: 5px;
+  background: #eceaea;
+  z-index: 100;
+}
+.co-been{
+  position: relative;
+  padding: 7px 10px;
+  border: 1px solid silver;
+  border-radius: 5px;
+  background: white;
+}
+.co-has-been{
+  left: 20px;
+}
+.co-no-been{
+  left: 10px;
+}
+.beenActive{
+  background: lightyellow;
 }
 .co-buttons-update{
   position: absolute;

@@ -3,7 +3,7 @@ import pic from '../assets/logo.png'
 
 let n21 = [
     {
-        reportUserName: 'aaa',
+        reportUserName: 'aaa1',
         reportTime: '2020-10-11 00:00',
         reportType: '啊是不是',
         reportRange: 'sadjwda',
@@ -12,7 +12,7 @@ let n21 = [
         reportInvite: 'asdb',
     },
     {
-        reportUserName: 'aaa',
+        reportUserName: 'aaa2',
         reportTime: '2020-10-11 00:20',
         reportType: 'sadddw不是',
         reportRange: 'sadjwda',
@@ -21,7 +21,7 @@ let n21 = [
         reportInvite: 'asdb',
     },
     {
-        reportUserName: 'bbb',
+        reportUserName: 'bbb3',
         reportTime: '2020-11-2 00:04',
         reportType: 'saddda',
         reportRange: 'sadjwda',

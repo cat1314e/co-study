@@ -148,7 +148,7 @@ export default {
 
     // 返回 父组件
     actionClickUserBack: function() {
-      // 当个人记录被删完时，调用这个
+
       this.$emit('fatherMethod')
     },
 
