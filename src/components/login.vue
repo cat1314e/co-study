@@ -26,6 +26,7 @@
 import pic from '../assets/coStudy.png'
 import common from '../utils/utils'
 import apis from "../http/api"
+
 export default {
   data: function() {
     return {

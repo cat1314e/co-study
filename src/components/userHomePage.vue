@@ -4,7 +4,7 @@
     <Card class="co-card" :bordered="false">
       <p>最近封禁详情：{{ reportName }}</p>
       <p>{{ reporterDetentionInfo.record_time }}</p>
-      <p>{{ reporterDetentionInfo.detention_type }}:</p>
+      <p>封禁类型：{{ reporterDetentionInfo.detention_type }}</p>
       <p>
         <span>{{ reporterDetentionInfo.who_detention }}</span>
         <span>{{ reporterDetentionInfo.ban_days }}</span>
@@ -13,8 +13,8 @@
         以下为历史封禁信息：
       </p>
       <div class="co-buttons-update">
-        <button  @click="updateDetentionRecordButton" v-if="reporterDetentionInfo.status !== -1" class="co-button-update">修改期限</button>
-        <button  @click="releaseDetentionRecordButton" v-if="reporterDetentionInfo.status !== -1" class="co-button-update">立即放出</button>
+        <button  @click="updateDetentionRecordButton" v-show="reporterDetentionInfo.status !== 0" class="co-button-update">修改期限</button>
+        <button  @click="releaseDetentionRecordButton" v-show="reporterDetentionInfo.status !== 0" class="co-button-update">立即放出</button>
         <button @click="actionClickUserBack" class="co-button-update">返回</button>
       </div>
     </Card>
@@ -90,7 +90,6 @@ import apis from "../http/api.js"
 
 export default {
   name: 'userPage',
-  // props: ['reportName'],
   data: function() {
     return {
       reportName: '',
@@ -187,12 +186,14 @@ export default {
         invite_code: this.reportName,
         detention_time: this.modalUpdateDetentionData.detention_time,
         ban_days: this.modalUpdateDetentionData.ban_days,
-        detention_type: this.reporterDetentionInfo.detention_type
-      };
+        detention_type: this.reporterDetentionInfo.detention_type,
+      }
       apis.report_update_detention_record(post_data).then(res => {
         const { data, errCode, msg } = res;
         if (errCode === 0) {
           this.showUserDetentionRecord = false
+          console.log('放出了')
+          this.getUserDetentionInfo(this.reportName)
         } else {
           alert(msg)
         }
@@ -232,7 +233,7 @@ export default {
       this.personalShow = !this.personalShow
     },
     userLiberateDetermine: function() {
-      this.updateDetentionRecord(1)
+      this.updateDetentionRecord(2)
       this.personalShow = !this.personalShow
       this.liberateDay = !this.liberateDay
 

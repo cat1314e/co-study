@@ -4,12 +4,15 @@
     <Card class="co-card" :bordered="false" v-for="(s, i) in userMessage"
           v-bind:key="i"
     >
-      <p><span @click="actionClickUserMsg(i)">被举报人：{{ s.be_report_invite_code }}</span></p>
+      <p>被举报人：<span @click="actionClickUserMsg(i)">{{ s.be_report_invite_code }}</span></p>
       <p>被举报时间：{{ s.datetime }}</p>
       <p>举报类型：{{ s.report_type }}</p>
       <p>举报范围：{{ s.report_content }}</p>
+      <p>举报状态：{{ s.be_report_status }}</p>
       <p>举报描述：{{ s.report_remark }}</p>
-      <img class="co-image" v-bind:src=getUrl(s.image)>
+      <div>
+        <img class="co-image" v-bind:src=getUrl(s.image)>
+      </div>
       <div class="co-buttons-update">
         <button @click="actionClickHandle" :disabled="canNoDetain" class="co-button-update">已核实</button>
         <button @click="actionClickIgnoreU" :disabled="canNoDetain" class="co-button-update">忽略</button>

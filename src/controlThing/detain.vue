@@ -2,7 +2,7 @@
   <div class="co-detain-all">
     <form method="get" class="co-detain-form">
       <label for="invitation">邀请码：  </label>
-      <input id="invitation" :value=be_report_invite_code  type="text"/>
+      <input id="invitation" :value=be_report_invite_code maxlength="4" type="text"/>
       <span @click="invitationSelect" class="co-select">查询</span>
     </form>
 <!--    <div class="co-detain-text">-->
