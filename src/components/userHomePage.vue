@@ -1,6 +1,6 @@
 <template >
 <div>
-  <div v-show="personalShow === false" v-if="reporterDetentionInfo.records[0].length !== 0">
+  <div class="userBackground" v-show="personalShow === false" v-if="reporterDetentionInfo.records[0].length !== 0">
     <Card class="co-card" :bordered="false">
       <p>最近封禁详情：{{ reportName }}</p>
       <p>{{ reporterDetentionInfo.record_time }}</p>
@@ -13,9 +13,9 @@
         以下为历史封禁信息：
       </p>
       <div class="co-buttons-update">
-        <button  @click="updateDetentionRecordButton" v-show="reporterDetentionInfo.status !== 0" class="co-button-update">修改期限</button>
-        <button  @click="releaseDetentionRecordButton" v-show="reporterDetentionInfo.status !== 0" class="co-button-update">立即放出</button>
-        <button @click="actionClickUserBack" class="co-button-update">返回</button>
+        <button  @click="updateDetentionRecordButton" v-show="reporterDetentionInfo.status !== 0" class="co-button-update button-changeTime">修改期限</button>
+        <button  @click="releaseDetentionRecordButton" v-show="reporterDetentionInfo.status !== 0" class="co-button-update button-changeOut">立即放出</button>
+        <button @click="actionClickUserBack" class="co-button-update button-changeBack">返回</button>
       </div>
     </Card>
     <Card class="co-card"
@@ -38,7 +38,7 @@
       <!--在todo里添加一个label使整行被点击都会响应-->
       <p> 暂无封禁记录～</p>
       <div class="co-buttons-update">
-        <button @click="actionClickUserBack" class="co-button-update" style="height: 50px !important;">返回</button>
+        <button @click="actionClickUserBack" class="co-button-update button-changeBack">返回</button>
       </div>
     </Card>
   </div>
@@ -58,8 +58,8 @@
        <p>将在{{ getModalUpdateDetentionMsg() }}</p>
      </form>
      <div class="button-judge">
-       <span @click="userClickCancel" class="co-judge">取消</span>
-       <span @click="userClickDetermine" class="co-judge">确定</span>
+       <button @click="userClickCancel" class="co-judge">取消</button>
+       <button @click="userClickDetermine" class="co-judge my-button-action">确定</button>
      </div>
    </div>
 </div>
@@ -72,8 +72,8 @@
     <p>确认后该用户将解封!</p>
     <br>
     <div class="button-judge">
-      <span @click="userLiberateCancel" class="co-judge">取消</span>
-      <span @click="userLiberateDetermine" class="co-judge">确定</span>
+      <button @click="userLiberateCancel" class="co-judge">取消</button>
+      <button @click="userLiberateDetermine" class="co-judge my-button-action">确定</button>
     </div>
   </div>
 </div>
@@ -254,14 +254,26 @@ export default {
   position: absolute;
   right: 5vw;
   width: 20vw;
+  /*font-size: 9px;*/
   top: 5%;
 }
 .co-button-update{
-  background: white;
   border: 1px solid #eee;
   width: 18vw;
   margin: 3%;
   border-radius: 5px;
+}
+.button-changeTime {
+  background: #f3e4aa;
+  color: #9c8c4f;
+}
+.button-changeOut {
+  background: #f3c4aa;
+  color: #784b1f;
+}
+.button-changeBack {
+  background: #eaf3aa;
+  color: #6fc81f;
 }
 .co-card {
   border: 1px solid #eee;
@@ -271,6 +283,9 @@ export default {
 .co-image{
   width: 60%
 }
+.userBackground{
+  background: #FAE8AA;
+}
 .co-chang-days{
   position: fixed;
   width: 100%;
@@ -278,29 +293,34 @@ export default {
   background: #000000;
   opacity: 0.5;
 }
+
 .co-chang-day{
   position: absolute;
   width: 80%;
   height: 40%;
-  background: #ffffff;
+  background: #FCF6E7;
   left: 10%;
   top: 20%;
-  color: black;
+  color: #403610;
   padding: 10px;
   border-radius: 5px;
 }
 .button-judge{
   position: absolute;
-  /*padding: 10px;*/
   left: 50%;
   bottom: 10%;
+  width: 200px;
   transform: translateX(-50%);
 
 }
 .co-judge{
   border: 1px solid black;
-  margin: 10px;
-  padding: 5px;
+  margin: 0 10px;
+  width: 66px;
+  height: 34px;
   border-radius: 5px;
+}
+.my-button-action{
+  background: lightsalmon;
 }
 </style>

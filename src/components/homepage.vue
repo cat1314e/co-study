@@ -1,48 +1,48 @@
 <template >
-<!--  v-show="1 === 2"-->
   <div  class="co-home" @touchstart="goTouchStart($event)" @touchmove="goTouchMove($event)" @touchend="goTouchEnd($event)">
     <div class="co-home-title">
-      <span class="co-no-been co-been"
+      <button class="co-no-been co-been"
             :class="{ beenActive: ifActive === true }"
             @click="actionNoVerify"
       >
         未核实
-      </span>
-      <span class="co-has-been co-been"
+      </button>
+      <button class="co-has-been co-been"
             :class="{ beenActive: ifActive === false }"
             @click="actionIsVerify"
       >
         已核实
-      </span>
+      </button>
     </div>
     <div>
       <Card class="co-card" :bordered="false" v-for="(m, i) in userMessage"
             v-show="homePage === true"
             v-bind:key="i"
       >
-        <p>被举报人：<span @click="actionClickUser(i)" class="zhu">{{ m.be_report_invite_code }}</span></p>
-        <p>被举报时间：{{ m.datetime }}</p>
-        <p>举报类型：<span class="zhu">{{ m.report_type }}</span></p>
+        <p @click="actionClickUser(i)">被举报人：<span class="changBackGround">{{ m.be_report_invite_code }}</span></p>
+        <p>举报时间：{{ m.datetime }}</p>
+        <p>举报类型：{{ m.report_type }}</p>
         <p>举报范围：{{ m.report_content }}</p>
-        <p>举报状态：<span class="zhu">{{ m.be_report_status }}</span></p>
+        <p>举报状态：{{ m.be_report_status }}</p>
         <p>举报描述：{{ m.report_remark }}</p>
-        <div>
-          <img class="co-image" v-bind:src=getUrl(m.image)>
+        <div class="co-list">
+          <img class="co-image" v-bind:src=getUrl(m.image) @click="enlargeImage">
+<!--          <img class="co-image" src="../assets/coStudy.png" v-bind:class=active @click="enlargeImage">-->
         </div>
         <div class="co-buttons-update" :data-id=m.id>
-          <button @click="actionClickHandle(i)" class="co-button-update">处理</button>
-          <button @click="actionClickIgnore(i)" class="co-button-update">忽略</button>
-          <button @click="actionClickDetain(i)" class="co-button-update">拘留</button>
+          <button @click="actionClickHandle(i)"  class="co-button-update button-handle">处理</button>
+          <button @click="actionClickIgnore(i)"  class="co-button-update button-ignore">忽略</button>
+          <button @click="actionClickDetain(i)"  class="co-button-update button-detain">拘留</button>
         </div>
         <div class="zhu-handle" v-show="HandleYes">
         </div>
         <div class="co-handle" v-show="HandleYes">
           <p>确定要处理该用户吗？</p>
           <p>1.用户的备考目标，昵称，设置默认值</p>
-          <p>2.cowall 删除</p>
+          <p>2.coWall 删除</p>
           <p>3.评论  删除。</p>
-          <button class="co-pan-handle co-left" @click="actionHandleYes(i)">确定</button>
-          <button class="co-pan-handle co-right" @click="actionHandleNo">取消</button>
+          <button class="co-pan-handle co-left changBackGround" @click="actionHandleNo">取消</button>
+          <button class="co-pan-handle co-right changBackGround " @click="actionHandleYes(i)">确定</button>
         </div>
       </Card>
 
@@ -84,6 +84,8 @@ export default {
         total: 100,
         page: 1
       },
+      activeClickActive: false,
+      active: '',
       homePage: true,
       home_to_verifyPage: false,
       home_to_userPage: false,
@@ -145,6 +147,19 @@ export default {
           console.log(res.data)
         }
       }).catch()
+    },
+
+    // 放大图片
+    enlargeImage(event) {
+      console.log('event', event)
+      this.activeClickActive = !this.activeClickActive
+      if (this.activeClickActive === true) {
+        this.active = 'png_active'
+      } else {
+        this.active = ''
+      }
+
+      // event.classList.add('png_active')
     },
 
     // 核实和未核实页面
@@ -259,25 +274,30 @@ export default {
   padding: 2px 0;
   margin: 5px 0;
   height: auto;
+  background: #FCF6E7;
 }
 .co-home{
-  background:#eee;
-  padding: 5px;
+  background: #FAE8AA;
   line-height: 5vh;
+  color: #78661f;
 }
 .co-home-title{
   position: relative;
   top: 0;
   width: 100%;
   padding: 5px;
-  background: #eceaea;
+  background: #FCF6E7;
+  opacity: 0.8;
   z-index: 100;
 }
 .co-been{
   position: relative;
-  padding: 7px 10px;
+  padding: 0 15px;
+  outline: none;
+  /*width: 80px;*/
   border: 1px solid silver;
   border-radius: 5px;
+  /*background: #f9f0cd;*/
   background: white;
 }
 .co-has-been{
@@ -287,7 +307,7 @@ export default {
   left: 10px;
 }
 .beenActive{
-  background: lightyellow;
+  background: #f3e4aa;
 }
 .co-buttons-update{
   position: absolute;
@@ -296,14 +316,29 @@ export default {
   top: 5%;
 }
 .co-button-update{
-  background: white;
   border: 1px solid #eee;
+  outline: none;
   width: 18vw;
   margin: 3%;
   border-radius: 5px;
 }
-.co-image{
-  width: 60%;
+.co-button-update:active{
+  background: lightskyblue;
+}
+.changBackGround:active{
+  background: lightskyblue;
+}
+.button-handle {
+  background: #f3e4aa;
+  color: #9c8c4f;
+}
+.button-detain {
+  background: #f3c4aa;
+  color: #784b1f;
+}
+.button-ignore {
+  background: #eaf3aa;
+  color: #6fc81f;
 }
 .zhu-handle{
   position: fixed;
@@ -315,9 +350,9 @@ export default {
 }
 .co-handle{
   position: fixed;
-  width: 300px;
+  width: 85vw;
   height: auto;
-  background: white;
+  background: #f3e4aa;
   top: 40%;
   left: 50%;
   padding: 10px;
@@ -327,14 +362,43 @@ export default {
   position: relative;
   background: white;
   border: 1px gainsboro solid;
-  width: 100px;
+  top: 2px;
+  width: 86px;
+  height: 40px;
   border-radius: 5px;
+  opacity: 0.8;
 }
 
 .co-right{
-  left: 40px;
+  left: 80px;
+  background: sandybrown;
+
 }
+
 .co-left{
-  /*left: 10px;*/
+  left: 20px;
+  background: honeydew;
 }
+.co-list{
+  position: relative;
+  width: 100%;
+  height: auto;
+}
+.co-image{
+  width: 30%;
+  height: 20vw;
+  z-index: 100;
+}
+.png_active{
+  position: absolute;
+  /*float: left;*/
+  transition: width 0.5s, height 0.5s, translateX 0.5s;
+  transform: translateX(-50%);
+  left: 50%;
+  top: 0;
+  width: 100%;
+  height: 50vw;
+}
+
+
 </style>

@@ -1,11 +1,12 @@
 <template>
   <div class="co-detain-all">
-    <form method="get" class="co-detain-form">
-      <label for="invitation">邀请码：  </label>
-      <input id="invitation" :value=be_report_invite_code maxlength="4" type="text"/>
-      <span @click="invitationSelect" class="co-select">查询</span>
-    </form>
-<!--    <div class="co-detain-text">-->
+    <div id="co-detain-background">
+    </div>
+      <form method="get" class="co-detain-form">
+        <label for="invitation">邀请码： </label>
+        <input id="invitation" :value=be_report_invite_code maxlength="4" type="text"/>
+        <span @click="invitationSelect" class="co-select">查询</span>
+      </form>
       <div class="co-detain-text">
         <h4>拘留：</h4>
         <label for="co-deType">拘留类型： </label>
@@ -21,33 +22,33 @@
         <button @click="detainClick" :disabled=canNoDetain class="co-detain-sure">{{ doDetain }}</button>
       </div>
 
-      <div class="co-detain-text co-detain-len">
+      <div class="co-detain-inner co-detain-len">
         <div v-if="reporterDetentionInfo.records[0].length !== 0">
           <div class="co-card" :bordered="false">
-            <p>最近封禁详情：{{ be_report_invite_code }}</p>
+            <p class="co-user-message">最近封禁详情：{{ be_report_invite_code }}</p>
             <div v-if="reporterDetentionInfo.record_time !== null">
-              <p>{{ reporterDetentionInfo.record_time }}</p>
-              <p>{{ reporterDetentionInfo.detention_type }}:</p>
-              <p>
+              <p class="co-user-message">{{ reporterDetentionInfo.record_time }}</p>
+              <p class="co-user-message">{{ reporterDetentionInfo.detention_type }}:</p>
+              <p class="co-user-message">
                 <span>{{ reporterDetentionInfo.who_detention }}</span>
                 <span>{{ reporterDetentionInfo.ban_days }}</span>
               </p>
             </div>
-            <p>
+            <p class="co-user-message">
               以下为历史封禁信息：
             </p>
           </div>
           <div class="co-card"
-                :bordered="false"
-                v-for="(s, i) in reporterDetentionInfo.records"
-                v-bind:key="i"
+               :bordered="false"
+               v-for="(s, i) in reporterDetentionInfo.records"
+               v-bind:key="i"
           >
-            <p><span >被举报人：{{ be_report_invite_code }}</span></p>
+            <p class="co-user-message"><span >被举报人：{{ be_report_invite_code }}</span></p>
             <div v-for="(m, n) in s"
                  v-bind:key="n"
             >
-              <p>{{ m.record_time }}</p>
-              <p>{{ m.record_desc }}{{ m.ban_days }}</p>
+              <p class="co-user-message">{{ m.record_time }}</p>
+              <p class="co-user-message">{{ m.record_desc }}{{ m.ban_days }}</p>
             </div>
           </div>
           <br>
@@ -55,12 +56,13 @@
         <div v-else>
           <div class="co-card" :bordered="false">
             <!--在todo里添加一个label使整行被点击都会响应-->
-            <p> 暂无封禁记录～</p>
+            <p class="co-user-message"> 暂无封禁记录～</p>
           </div>
         </div>
       </div>
-<!--    </div>-->
-  </div>
+    </div>
+
+
 
 </template>
 
@@ -274,23 +276,39 @@ export default {
 </script>
 
 <style>
+#co-detain-background{
+  position: fixed;
+  top: 0;
+  background: #faebb8;
+  opacity: 0.8;
+  width: 100vw;
+  height: 100vh;
+  z-index: -100;
+}
 .co-detain-form{
   border-bottom: solid #a1a0a0 1px;
+  background: #faebb8;
   padding: 10px;
 }
 
 .co-detain-all{
   font-size: 16px;
+  background: #faebb8;
+  opacity: 0.8;
+  width: 100%;
+  height: 100%;
+  color: #78661f;
 }
 #invitation{
   width: 35vw;
   height: 30px;
+  background: #f5f2f2c4;
 }
 .co-select{
   position: relative;
   left: 3%;
   border-radius: 5px;
-  background: white;
+  background: #fb00001a;
   height: auto;
   font-size: 16px;
   padding: 4px 10px;
@@ -306,18 +324,25 @@ export default {
 .co-detain-text{
   line-height: 270%;
   padding: 10px;
+  /*background: #FCF6E7;*/
+}
+.co-detain-inner{
+  line-height: 270%;
 }
 #co-deType{
   width: 28vw;
   border-radius: 5px;
   height: 30px;
-  background: white;
+  background: #fdf596;
+}
+.co-user-message{
+  padding: 0 10px;
 }
 #downMenu{
   width: 50vw;
   border-radius: 3px;
   height: 30px;
-  background: white;
+  background: #fdf596;
 }
 .co-detain-sure{
   position: relative;
@@ -325,7 +350,7 @@ export default {
   height: auto;
   border-radius: 5px;
   left: 1%;
-  background: #ffffff;
+  background: #fbf3f3ba;
   border: 1px solid #a1a0a0;
 }
 
@@ -333,7 +358,7 @@ export default {
   position: relative;
   top: 10px;
   border-top: solid #a1a0a0 1px;
-  border-bottom: solid #a1a0a0 1px;
+  /*border-bottom: solid #a1a0a0 1px;*/
   padding-bottom: 10px;
 }
 </style>

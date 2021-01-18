@@ -5,7 +5,7 @@
           v-bind:key="i"
     >
       <p>被举报人：<span @click="actionClickUserMsg(i)">{{ s.be_report_invite_code }}</span></p>
-      <p>被举报时间：{{ s.datetime }}</p>
+      <p>举报时间：{{ s.datetime }}</p>
       <p>举报类型：{{ s.report_type }}</p>
       <p>举报范围：{{ s.report_content }}</p>
       <p>举报状态：{{ s.be_report_status }}</p>
@@ -98,7 +98,7 @@ export default {
   top: 5%;
 }
 .co-button-update{
-  background: white;
+  background: #0a0a0a0a;
   border: 1px solid #eee;
   width: 18vw;
   margin: 3%;
