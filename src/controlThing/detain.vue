@@ -247,7 +247,7 @@ export default {
     // 批量核实
     detainClick() {
       let countDay = this.selected
-      let detention_time = this.getDetainOutTime()
+      let detention_time = this.$moment().format('YYYY-MM-DD HH:mm:ss')
       let codeIds = this.getReportIds()
       let post_data = {
         id: codeIds.join(','),
