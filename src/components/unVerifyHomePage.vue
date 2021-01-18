@@ -10,8 +10,19 @@
       <p>举报范围：{{ s.report_content }}</p>
       <p>举报状态：{{ s.be_report_status }}</p>
       <p>举报描述：{{ s.report_remark }}</p>
-      <div>
-        <img class="co-image" v-bind:src=getUrl(s.image)>
+      <div class="co-list">
+        <!--          v-show="s.image.length > 0"-->
+        <!--          v-for="(a, j) in s.image"-->
+        <!--          v-bind:src=a-->
+        <img
+            class="co-image"
+            v-bind:src=s.report_images
+            v-bind:class="{
+                    png_active: i === activeIndex,
+                }"
+            @click="enlargeImage(i)"
+        >
+        <!--          <img class="co-image" src="../assets/coStudy.png" v-bind:class=active @click="enlargeImage">-->
       </div>
       <div class="co-buttons-update">
         <button @click="actionClickHandle" :disabled="canNoDetain" class="co-button-update">已核实</button>
@@ -36,6 +47,7 @@ export default {
       userMessage: [],
       canNoDetain: true,
       card: null,
+      activeIndex: -1,
       pngUrl: 'https://co-study.oss-cn-shanghai.aliyuncs.com/app/image/report/',
       pageOption: {
         page_size: 10,
@@ -76,6 +88,18 @@ export default {
       this.card = this.userMessage[index].be_report_invite_code
       this.$emit('homePageMethod', this.card)
     },
+
+    // 图片点击放大
+    enlargeImage(index) {
+      this.activeClickActive = !this.activeClickActive
+      if (this.activeClickActive === true) {
+        this.activeIndex = index
+      } else {
+        this.activeIndex = -1
+      }
+      // event.classList.add('png_active')
+    },
+
     actionClickHandle: function(event) {
 
     },
@@ -110,7 +134,19 @@ export default {
   margin: 5px 0;
 }
 .co-image{
-  width: 60%
+  width: 30%;
+  height: 20vw;
+  z-index: 100;
+}
+.png_active{
+  position: absolute;
+  /*float: left;*/
+  transition: width 0.5s, height 0.5s, translateX 0.5s;
+  transform: translateX(-50%);
+  left: 50%;
+  top: 0;
+  width: 100%;
+  height: 50vw;
 }
 
 </style>

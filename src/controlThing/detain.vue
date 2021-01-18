@@ -15,9 +15,8 @@
         </select>
         <br>
         <label for="downMenu">拘留天数： </label>
-        <select id="downMenu" v-model="selected">
-          <option v-for="(option, i) in options " :key="i" :value ="option.value">{{ option.text }}</option>
-        </select>
+        <input id="downMenu" v-model="selected">
+        </input>
         <p>预计于 {{ getDetainOutTime() }} 释放</p>
         <button @click="detainClick" :disabled=canNoDetain class="co-detain-sure">{{ doDetain }}</button>
       </div>
@@ -104,16 +103,15 @@ const findType = (array, type) => {
 export default {
   name: 'detain',
   data: function(){
-    let options = [
-      {text: '1 天', value: 1},
-      {text: '3 天', value: 3},
-      {text: '7 天', value: 7},
-    ]
-
+    // let options = [
+    //   {text: '1 天', value: 1},
+    //   {text: '3 天', value: 3},
+    //   {text: '7 天', value: 7},
+    // ]
     return {
       co_id: '',
       selected: 1,
-      options: options,
+      // options: options,
       userMessage: [],
       detention_type: null,
       be_report_invite_code: '',

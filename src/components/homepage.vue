@@ -26,7 +26,17 @@
         <p>举报状态：{{ m.be_report_status }}</p>
         <p>举报描述：{{ m.report_remark }}</p>
         <div class="co-list">
-          <img class="co-image" v-bind:src=getUrl(m.image) @click="enlargeImage">
+<!--          v-show="m.image.length > 0"-->
+<!--          v-for="(a, j) in m.image"-->
+<!--          v-bind:src=a-->
+          <img
+              class="co-image"
+              v-bind:src=m.report_images
+              v-bind:class="{
+                    png_active: i === activeIndex,
+                }"
+              @click="enlargeImage(i)"
+          >
 <!--          <img class="co-image" src="../assets/coStudy.png" v-bind:class=active @click="enlargeImage">-->
         </div>
         <div class="co-buttons-update" :data-id=m.id>
@@ -85,7 +95,8 @@ export default {
         page: 1
       },
       activeClickActive: false,
-      active: '',
+      activeIndex: -1,
+      // active: '',
       homePage: true,
       home_to_verifyPage: false,
       home_to_userPage: false,
@@ -150,13 +161,14 @@ export default {
     },
 
     // 放大图片
-    enlargeImage(event) {
-      console.log('event', event)
+    enlargeImage(index) {
+
       this.activeClickActive = !this.activeClickActive
+
       if (this.activeClickActive === true) {
-        this.active = 'png_active'
+        this.activeIndex = index
       } else {
-        this.active = ''
+        this.activeIndex = -1
       }
 
       // event.classList.add('png_active')
@@ -188,7 +200,7 @@ export default {
       this.HandleYes = !this.HandleYes
       // 删除这个邀请码的举报范围：
       // 1用户 => 用户的备考目标，昵称，设置默认值
-      // 2 cowall 删除
+      // 2 coWall 删除
       // 3 评论  删除
 
 
@@ -313,7 +325,7 @@ export default {
   position: absolute;
   right: 5vw;
   width: 20vw;
-  top: 5%;
+  top: 20px;
 }
 .co-button-update{
   border: 1px solid #eee;
