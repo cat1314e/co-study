@@ -45,7 +45,7 @@ switch (Host.env) {
 
 // var baseURL = Host.lanHost;
 // var baseURL = Host.localHost;
-// var baseURL = Host.testHost;
+// baseURL = Host.testHost;
 // var baseURL = Host.PublicHost;
 // var baseURL = Host.localStudyHost;
 

@@ -8,8 +8,8 @@ const CONFIG = {
     // testHost: 'http://106.15.227.20:3333',
 
     // env: 'pub',
-    // env:'test',
-    env:'lan',
+    env:'test',
+    // env:'lan',
     // env:'dev',
 
     // 后台项目

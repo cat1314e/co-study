@@ -254,7 +254,6 @@ export default {
   position: absolute;
   right: 5vw;
   width: 20vw;
-  /*font-size: 9px;*/
   top: 5%;
 }
 .co-button-update{

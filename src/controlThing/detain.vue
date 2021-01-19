@@ -54,7 +54,6 @@
         </div>
         <div v-else>
           <div class="co-card" :bordered="false">
-            <!--在todo里添加一个label使整行被点击都会响应-->
             <p class="co-user-message"> 暂无封禁记录～</p>
           </div>
         </div>
@@ -67,51 +66,15 @@
 
 <script>
 import apis from "../http/api.js"
-
-
-const findId = (array, id) => {
-  id = Number(id)
-  for (let i = 0; i < array.length; i++) {
-    let index = array[i]
-    if (index.id === id) {
-      return index
-    }
-  }
-}
-
-const findAllId = (array, intCode) => {
-  let result = []
-  for (let i = 0; i < array.length; i++) {
-    if (array[i].be_report_invite_code === intCode) {
-      let index = array[i].id.toString()
-      result.push(index)
-    }
-  }
-  return result
-}
-
-const findType = (array, type) => {
-  for (let i = 0; i < array.length; i++) {
-    let index = array[i]
-    if (index.label === type) {
-      return index
-    }
-  }
-}
+import tool from '../tool/tool.js'
 
 
 export default {
   name: 'detain',
   data: function(){
-    // let options = [
-    //   {text: '1 天', value: 1},
-    //   {text: '3 天', value: 3},
-    //   {text: '7 天', value: 7},
-    // ]
     return {
       co_id: '',
       selected: 1,
-      // options: options,
       userMessage: [],
       detention_type: null,
       be_report_invite_code: '',
@@ -155,7 +118,7 @@ export default {
         if (errCode === 0) {
           this.reportTypeList = res.data.reportTypeList
           let typeArray = res.data.reportTypeList
-          let type1 = findType(typeArray, this.report_type)
+          let type1 = tool.findType(typeArray, this.report_type)
           this.detention_type = type1.value
         }
       }).catch()
@@ -230,7 +193,7 @@ export default {
       console.log('codeIds', codeIds)
       if (codeIds.length === 0) {
         this.canNoDetain = true
-        this.doDetain = '改用户当前未被举报'
+        this.doDetain = '该用户当前未被举报'
       } else {
         this.canNoDetain = false
         this.doDetain = '确定'
@@ -241,7 +204,7 @@ export default {
       this.getData()
       let array = this.userMessage
       let intCode = this.be_report_invite_code
-      let codeIds = findAllId(array, intCode)
+      let codeIds = tool.findAllId(array, intCode)
       return codeIds
     },
     // 批量核实
@@ -332,6 +295,7 @@ export default {
   border-radius: 5px;
   height: 30px;
   background: #fdf596;
+  color: #584703;
 }
 .co-user-message{
   padding: 0 10px;
@@ -341,6 +305,7 @@ export default {
   border-radius: 3px;
   height: 30px;
   background: #fdf596;
+  color: #584703;
 }
 .co-detain-sure{
   position: relative;

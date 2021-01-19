@@ -1,6 +1,5 @@
 <template >
   <div>
-<!--    <p>我的世界</p>-->
     <Card class="co-card" :bordered="false" v-for="(s, i) in userMessage"
           v-bind:key="i"
     >
@@ -16,11 +15,14 @@
         <!--          v-bind:src=a-->
         <img
             class="co-image"
-            v-bind:src=s.report_images
+            v-show="s.image.length > 0"
+            v-for="(a, j) in s.image"
+            v-bind:src=getUrl(a)
+            v-bind:key="j"
             v-bind:class="{
-                    png_active: i === activeIndex,
+                    png_active: i === activeIndex01 && j === activeIndex02,
                 }"
-            @click="enlargeImage(i)"
+            @click="enlargeImage(i, j)"
         >
         <!--          <img class="co-image" src="../assets/coStudy.png" v-bind:class=active @click="enlargeImage">-->
       </div>
@@ -47,7 +49,8 @@ export default {
       userMessage: [],
       canNoDetain: true,
       card: null,
-      activeIndex: -1,
+      activeIndex01: -1,
+      activeIndex02: -1,
       pngUrl: 'https://co-study.oss-cn-shanghai.aliyuncs.com/app/image/report/',
       pageOption: {
         page_size: 10,
@@ -57,7 +60,7 @@ export default {
     }
   },
   created() {
-    this.getVerifyData()
+    // this.getVerifyData()
   },
   methods: {
     getVerifyData: function(t = 1) {
@@ -90,12 +93,14 @@ export default {
     },
 
     // 图片点击放大
-    enlargeImage(index) {
+    enlargeImage(i, j) {
       this.activeClickActive = !this.activeClickActive
-      if (this.activeClickActive === true) {
-        this.activeIndex = index
+      if (this.activeClickActive === true ) {
+        this.activeIndex01 = j
+        this.activeIndex02 = i
       } else {
-        this.activeIndex = -1
+        this.activeIndex01 = -1
+        this.activeIndex02 = -1
       }
       // event.classList.add('png_active')
     },

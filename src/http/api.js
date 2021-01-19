@@ -29,6 +29,7 @@ const apis = {
     report_get_user_detention_record: (params) => ajax('get', '/v2/report/get/user_detention_record', params, 'study'),
     report_get_be_reporter_last_status: (params) => ajax('get', '/v2/report/get/be_reporter/last_status', params, 'study'),
     report_update_detention_record: (params) => ajax('post', '/v2/report/update/detention_record', params, 'study'),
+    report_handle: (params) => ajax('post', '/v2/report/handel', params, 'study'),
 
     report_classroom_get_options:(params) => ajax('get', '/v2/report/get/classroom_report_filter_options', params, 'study'),
     report_classroom_get_be_reporter_status: (params) => ajax('get', '/v2/report/get/be_report_classroom/status', params, 'study'),

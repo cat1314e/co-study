@@ -5,7 +5,7 @@
             :class="{ beenActive: ifActive === true }"
             @click="actionNoVerify"
       >
-        未核实
+        待处理
       </button>
       <button class="co-has-been co-been"
             :class="{ beenActive: ifActive === false }"
@@ -31,18 +31,25 @@
 <!--          v-bind:src=a-->
           <img
               class="co-image"
-              v-bind:src=m.report_images
+              v-show="m.image.length > 0"
+              v-for="(a, j) in m.image"
+              v-bind:src=getUrl(a)
+              v-bind:key="j"
               v-bind:class="{
-                    png_active: i === activeIndex,
+                    png_active: j === activeIndex01 && i === activeIndex02,
                 }"
-              @click="enlargeImage(i)"
+              @click="enlargeImage(i, j)"
           >
 <!--          <img class="co-image" src="../assets/coStudy.png" v-bind:class=active @click="enlargeImage">-->
         </div>
         <div class="co-buttons-update" :data-id=m.id>
           <button @click="actionClickHandle(i)"  class="co-button-update button-handle">处理</button>
           <button @click="actionClickIgnore(i)"  class="co-button-update button-ignore">忽略</button>
-          <button @click="actionClickDetain(i)"  class="co-button-update button-detain">拘留</button>
+          <button
+              v-show="contentType.includes(m.content_type) "
+              @click="actionClickDetain(i)"
+              class="co-button-update button-detain"
+          >拘留</button>
         </div>
         <div class="zhu-handle" v-show="HandleYes">
         </div>
@@ -95,7 +102,9 @@ export default {
         page: 1
       },
       activeClickActive: false,
-      activeIndex: -1,
+      activeIndex01: -1,
+      activeIndex02: -1,
+      contentType: [0, 1, 4],
       // active: '',
       homePage: true,
       home_to_verifyPage: false,
@@ -123,8 +132,11 @@ export default {
       if (this.distance > 30) {
         this.userPage += 1
         let t = this.userPage
-        this.getData(t)
-        this.$refs.Verify.getVerifyData(t)
+        if (this.ifActive === true) {
+          this.getData(t)
+        } else {
+          this.$refs.Verify.getVerifyData(t)
+        }
         console.log('this.userPage',this.userPage)
       }
     },
@@ -161,16 +173,15 @@ export default {
     },
 
     // 放大图片
-    enlargeImage(index) {
-
+    enlargeImage(i, j) {
       this.activeClickActive = !this.activeClickActive
-
-      if (this.activeClickActive === true) {
-        this.activeIndex = index
+      if (this.activeClickActive === true ) {
+        this.activeIndex01 = j
+        this.activeIndex02 = i
       } else {
-        this.activeIndex = -1
+        this.activeIndex01 = -1
+        this.activeIndex02 = -1
       }
-
       // event.classList.add('png_active')
     },
 
@@ -186,6 +197,7 @@ export default {
       this.homePage = false
       this.home_to_verifyPage = true
       this.home_to_userPage = false
+      this.$refs.Verify.getVerifyData()
     },
     // 切换到个人页面
     actionClickUser: function(index) {
@@ -202,7 +214,17 @@ export default {
       // 1用户 => 用户的备考目标，昵称，设置默认值
       // 2 coWall 删除
       // 3 评论  删除
-
+      let params = {
+        report_id: index,
+      }
+      apis.report_handle(params).then(res => {
+        const { data, errCode, msg } = res;
+        if (errCode === 0) {
+          console.log('处理成功')
+          let id = index.toString()
+          this.userMessage = tool.removeArray01(this.userMessage, id)
+        }
+      }).catch()
 
     },
     actionHandleNo: function() {
@@ -215,7 +237,7 @@ export default {
     fatherMethod() {
       const e = (selector) => document.querySelector(selector)
       let selector = e('.beenActive')
-      if (selector.innerText.includes('未核实')) {
+      if (selector.innerText.includes('待处理')) {
         console.log('测试')
         this.home_to_userPage = false
         this.homePage = true
@@ -320,6 +342,7 @@ export default {
 }
 .beenActive{
   background: #f3e4aa;
+  /*color: #9c8c4f;*/
 }
 .co-buttons-update{
   position: absolute;
@@ -340,11 +363,11 @@ export default {
 .changBackGround:active{
   background: lightskyblue;
 }
-.button-handle {
+.button-detain {
   background: #f3e4aa;
   color: #9c8c4f;
 }
-.button-detain {
+.button-handle {
   background: #f3c4aa;
   color: #784b1f;
 }
@@ -403,7 +426,6 @@ export default {
 }
 .png_active{
   position: absolute;
-  /*float: left;*/
   transition: width 0.5s, height 0.5s, translateX 0.5s;
   transform: translateX(-50%);
   left: 50%;
