@@ -29,16 +29,16 @@
           <img
               class="co-image"
               v-for="(a, j) in m.image"
-              v-show="a !== ''"
+              v-show="a !== '' || a !== null"
               v-bind:src=getUrl(a)
               v-bind:key="j"
+              v-bind:id="a"
               v-bind:class="{
                     png_active: j === activeIndex01 && i === activeIndex02,
                 }"
-              @error="handleError(j,i)"
+              @error="handleError(j, i)"
               @click="enlargeImageHome(j, i)"
           >
-<!--          <img class="co-image" src="../assets/coStudy.png" v-bind:class=active @click="enlargeImageHome">-->
         </div>
         <div class="co-buttons-update" :data-id=m.id>
           <button
@@ -107,7 +107,6 @@ export default {
   data: function() {
     return {
       userMessage: [],
-      notShowList: [],
       ifActive: true,
       pageOption: {
         page_size: 10,
@@ -207,10 +206,9 @@ export default {
     },
 
 
-    handleError(j,i) {
-      this.notShowList.push(j.toString()+i.toString())
-      console.log('1231232')
-      console.log(this.notShowList)
+    handleError(j, i) {
+      this.userMessage
+
     },
     // 放大图片
     enlargeImageHome(j, i) {
@@ -222,7 +220,6 @@ export default {
         this.activeIndex01 = -1
         this.activeIndex02 = -1
       }
-      // event.classList.add('png_active')
     },
 
     // 核实和未核实页面

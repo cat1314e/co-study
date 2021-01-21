@@ -13,7 +13,7 @@
         <img
             class="co-image"
             v-for="(a, j) in s.image"
-            v-show="a !== ''"
+            v-show="a !== '' || a != null"
             v-bind:src=getUrl(a)
             v-bind:key="j"
             v-bind:class="{
@@ -91,7 +91,7 @@ export default {
       this.$emit('homePageMethod', this.card)
     },
 
-    handleError($event) {
+    handleError(event) {
 
     },
     // 图片点击放大
