@@ -9,17 +9,17 @@
       <p>举报范围：{{ s.report_content }}</p>
       <p>举报状态：{{ s.be_report_status }}</p>
       <p>举报描述：{{ s.report_remark }}</p>
-      <div class="co-list">
+      <div class="co-list"  v-show="imgActiveChange === true">
         <img
             class="co-image"
             v-for="(a, j) in s.image"
-            v-show="a !== '' || a != null"
+            v-show="a !== ''"
             v-bind:src=getUrl(a)
             v-bind:key="j"
             v-bind:class="{
                     png_active: j === activeIndex01 && i === activeIndex02,
                 }"
-            @error="handleError($event)"
+            @error="handleError(j, i)"
             @click="enlargeImageVerify(j, i)"
         >
       </div>
@@ -45,6 +45,7 @@ export default {
     return {
       userMessage: [],
       canNoDetain: true,
+      imgActiveChange: true,
       card: null,
       activeIndex01: -1,
       activeIndex02: -1,
@@ -91,8 +92,10 @@ export default {
       this.$emit('homePageMethod', this.card)
     },
 
-    handleError(event) {
-
+    handleError(j, i) {
+      this.imgActiveChange = !this.imgActiveChange
+      this.userMessage[i].image[j] = ''
+      this.imgActiveChange = !this.imgActiveChange
     },
     // 图片点击放大
     enlargeImageVerify(j, i) {

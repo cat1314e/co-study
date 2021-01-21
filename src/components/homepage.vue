@@ -25,22 +25,21 @@
         <p>举报范围：{{ m.report_content }}</p>
         <p>举报状态：{{ m.be_report_status }}</p>
         <p>举报描述：{{ m.report_remark }}</p>
-        <div class="co-list">
+        <div class="co-list" v-show="imgActiveChange === true">
           <img
               class="co-image"
               v-for="(a, j) in m.image"
-              v-show="a !== '' || a !== null"
+              v-show="a !== ''"
               v-bind:src=getUrl(a)
               v-bind:key="j"
-              v-bind:id="a"
               v-bind:class="{
-                    png_active: j === activeIndex01 && i === activeIndex02,
-                }"
+              png_active: j === activeIndex01 && i === activeIndex02,
+              }"
               @error="handleError(j, i)"
               @click="enlargeImageHome(j, i)"
           >
         </div>
-        <div class="co-buttons-update" :data-id=m.id>
+        <div class="co-buttons-update" :data-id=m.id v-show="buttonActiveChange">
           <button
               v-if="m.handel_status === 1"
               @click="actionClickHandle(i)"
@@ -119,6 +118,7 @@ export default {
       },
       canNoHandle: false,
       activeClickActive: false,
+      buttonActiveChange: true,
       activeIndex01: -1,
       activeIndex02: -1,
       contentType: [0, 1, 4],
@@ -126,6 +126,7 @@ export default {
       home_to_verifyPage: false,
       home_to_userPage: false,
       HandleYes: false,
+      imgActiveChange: true,
       user_test: '',
       co_id: '',
       distance: 0,
@@ -207,7 +208,9 @@ export default {
 
 
     handleError(j, i) {
-      this.userMessage
+      this.imgActiveChange = !this.imgActiveChange
+      this.userMessage[i].image[j] = ''
+      this.imgActiveChange = !this.imgActiveChange
 
     },
     // 放大图片
@@ -255,8 +258,11 @@ export default {
         const { data, errCode, msg } = res
         if (errCode === 0) {
           console.log('处理成功', id)
+          this.buttonActiveChange = !this.buttonActiveChange
           this.userMessage = tool.changeHandelStatus(this.userMessage, id)
+          this.buttonActiveChange = !this.buttonActiveChange
           console.log('更改后', this.userMessage)
+
         }
       }).catch()
 
@@ -268,6 +274,7 @@ export default {
     actionClickHandle: function(index) {
       this.HandleYes = !this.HandleYes
       this.co_id = this.userMessage[index].id
+
     },
 
     fatherMethod() {
@@ -459,6 +466,7 @@ export default {
   height: 20vw;
   z-index: 100;
 }
+
 .png_active{
   position: absolute;
   /*transition: width 0.5s, height 0.5s, translateX 0.5s;*/
